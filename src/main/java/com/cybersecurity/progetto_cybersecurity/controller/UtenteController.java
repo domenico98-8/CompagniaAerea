@@ -1,7 +1,7 @@
 package com.cybersecurity.progetto_cybersecurity.controller;
 
 
-import com.cybersecurity.progetto_cybersecurity.entity.Utente;
+import com.cybersecurity.progetto_cybersecurity.controller.dto.UtenteDTO;
 import com.cybersecurity.progetto_cybersecurity.services.UtenteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -15,7 +15,7 @@ public class UtenteController {
     private UtenteService utenteService;
 
     @PostMapping("/registrazione")
-    public Utente registraUtente(@RequestBody Utente utente) {
-        return utenteService.salvaUtente(utente);
+    public UtenteDTO registraUtente(@RequestBody UtenteDTO utente) {
+        return utenteService.saveUtente(utente);
     }
 }

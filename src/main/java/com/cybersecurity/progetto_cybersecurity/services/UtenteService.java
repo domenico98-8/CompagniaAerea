@@ -1,12 +1,15 @@
 package com.cybersecurity.progetto_cybersecurity.services;
 
 
+import com.cybersecurity.progetto_cybersecurity.controller.dto.UtenteDTO;
+import com.cybersecurity.progetto_cybersecurity.controller.mapper.UtenteMapper;
 import com.cybersecurity.progetto_cybersecurity.entity.Utente;
 import com.cybersecurity.progetto_cybersecurity.repository.UtenteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UtenteService {
@@ -14,11 +17,21 @@ public class UtenteService {
     @Autowired
     private UtenteRepository utenteRepository;
 
-    public Optional<Utente> trovaPerEmail(String email) {
-        return utenteRepository.findByEmail(email);
+    @Autowired
+    private UtenteMapper utenteMapper;
+
+    public List<UtenteDTO> getAllUtenti() {
+        // Recupera tutti gli utenti e li converte in DTO
+        return utenteRepository.findAll()
+                .stream()
+                .map(utenteMapper::toDTO)
+                .collect(Collectors.toList());
     }
 
-    public Utente salvaUtente(Utente utente) {
-        return utenteRepository.save(utente);
+    public UtenteDTO saveUtente(UtenteDTO utenteDTO) {
+        // Converte il DTO in entità e lo salva nel database
+        Utente utente = utenteMapper.toEntity(utenteDTO);
+        utente = utenteRepository.save(utente);
+        return utenteMapper.toDTO(utente);
     }
 }
