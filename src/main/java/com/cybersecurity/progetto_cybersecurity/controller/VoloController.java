@@ -10,7 +10,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Duration;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.time.Instant;
 
 @Slf4j
 @CrossOrigin(origins = "http://localhost:4200")
@@ -29,24 +33,42 @@ public class VoloController {
     }
 
     @PostMapping("/inserisciVoli")
-    public ResponseEntity<Volo> inserisciVoli(@RequestBody Volo volo) {
+    public ResponseEntity<String> inserisciVoli(@RequestBody Volo volo) {
         try {
-            Volo nuovoVolo = voloService.salvaVolo(volo);
-            return ResponseEntity.status(HttpStatus.CREATED).body(nuovoVolo); // Status 201 Created
+            voloService.salvaVolo(volo);
+            return ResponseEntity.status(HttpStatus.CREATED).body("Success"); // Status 201 Created
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build(); // Status 400 Bad Request
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error"); // Status 400 Bad Request
         }
     }
 
     @PostMapping("/cercaVoli")
-    public ResponseEntity<List<Volo>> cercaVoli(@RequestBody VoloDTO voloDto) {
+    public ResponseEntity<List<VoloDTO>> cercaVoli(@RequestBody VoloDTO voloDto) {
         try {
-            List<Volo> voli = voloService.trovaVoliAndata(voloDto);
-            log.error("Numero voli trovati:{}",voli.size());
+            List<VoloDTO> voli = voloService.trovaVoliAndata(voloDto);
+            setDurataVoli(voli);
+            log.info("Numero voli trovati:{}",voli.size());
             return ResponseEntity.ok(voli); // Status 200 OK
         } catch (Exception e) {
             log.error("Errore nella ricerca dei voli",e);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build(); // Status 404 Not Found
+        }
+    }
+
+    private void setDurataVoli(List<VoloDTO> voli) {
+        for (VoloDTO volo : voli) {
+            if (volo.getOrarioPartenza() != null && volo.getOrarioArrivo() != null) {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+
+                LocalTime partenza = LocalTime.parse(volo.getOrarioPartenza(), formatter);
+                LocalTime arrivo = LocalTime.parse(volo.getOrarioArrivo(), formatter);
+
+                Duration durata = Duration.between(partenza, arrivo);
+
+                volo.setDurataVolo(durata.toHours()+"H"+ (durata.toMinutes() % 60) + "min");
+            } else {
+                volo.setDurataVolo("Dati insufficienti"); // Gestione dei casi senza date
+            }
         }
     }
 }

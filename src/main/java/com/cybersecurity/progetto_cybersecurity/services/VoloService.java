@@ -33,10 +33,11 @@ public class VoloService {
     }
 
 
-    public List<Volo> trovaVoliAndata(VoloDTO voloDto) {
+    public List<VoloDTO> trovaVoliAndata(VoloDTO voloDto) {
         Volo volo=voloMapper.toEntity(voloDto);
         LocalDateTime maxTime =volo.getDataPartenza().toLocalDate().atTime(LocalTime.MAX);
-        return voloRepository.findVoloByFromToDate(volo.getPartenzaDa(),volo.getDestinazioneA(),volo.getDataPartenza(), maxTime);
+        List<VoloDTO> voliDTO=voloMapper.toDTOList(voloRepository.findVoloByFromToDate(volo.getPartenzaDa(),volo.getDestinazioneA(),volo.getDataPartenza(), maxTime));
+        return voliDTO;
     }
 
     public Volo salvaVolo(Volo volo) {

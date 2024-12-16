@@ -7,7 +7,10 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class VoloMapper {
@@ -42,6 +45,24 @@ public class VoloMapper {
         volo.setDataArrivo(convertToLocalDateTime(dto.getDataArrivo(),dto.getOrarioArrivo()));
         volo.setPrezzo(dto.getPrezzo());
         return volo;
+    }
+
+    public List<VoloDTO> toDTOList(List<Volo> voli) {
+        if (voli == null || voli.isEmpty()) {
+            return new ArrayList<>();
+        }
+        return voli.stream()
+                .map(this::toDTO) // Usa il metodo esistente toDTO
+                .collect(Collectors.toList());
+    }
+
+    public List<Volo> toEntityList(List<VoloDTO> voloDTOs) {
+        if (voloDTOs == null || voloDTOs.isEmpty()) {
+            return new ArrayList<>();
+        }
+        return voloDTOs.stream()
+                .map(this::toEntity) // Usa il metodo esistente toEntity
+                .collect(Collectors.toList());
     }
 
     private LocalDateTime convertToLocalDateTime(Date data, String orario) {

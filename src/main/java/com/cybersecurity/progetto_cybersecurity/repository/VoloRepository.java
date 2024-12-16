@@ -14,7 +14,7 @@ public interface VoloRepository extends JpaRepository<Volo, Long> {
 
     Optional<Volo> findById(Long id);
 
-    @Query("SELECT v FROM Volo v WHERE v.partenzaDa = :from AND v.destinazioneA = :to AND " +
+    @Query("SELECT v FROM Volo v WHERE v.partenzaDa LIKE %:from% AND v.destinazioneA LIKE %:to% AND " +
             "v.dataPartenza >= :fromDate AND v.dataPartenza <= :maxDate")
     List<Volo> findVoloByFromToDate(@Param("from") String from,
                                     @Param("to") String to,
