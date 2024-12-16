@@ -8,5 +8,6 @@ public class UtenteDTO {
     private String nome;
     private String cognome;
     private String email;
-    private String ruolo; // Non includiamo la password per motivi di sicurezza
+    private String ruolo;
+    private String password;
 }

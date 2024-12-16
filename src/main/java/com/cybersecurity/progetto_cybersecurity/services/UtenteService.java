@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,5 +34,10 @@ public class UtenteService {
         Utente utente = utenteMapper.toEntity(utenteDTO);
         utente = utenteRepository.save(utente);
         return utenteMapper.toDTO(utente);
+    }
+
+    public Optional<UtenteDTO> getUtente(String email) {
+        Optional<Utente> utente=utenteRepository.findByEmail(email);
+        return utente.map(value -> utenteMapper.toDTO(value));
     }
 }
