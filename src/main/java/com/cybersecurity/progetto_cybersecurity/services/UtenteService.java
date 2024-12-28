@@ -40,4 +40,9 @@ public class UtenteService {
         Optional<Utente> utente=utenteRepository.findByEmail(email);
         return utente.map(value -> utenteMapper.toDTO(value));
     }
+
+    public Boolean existUtente(String email) {
+        Optional<Utente> utente=utenteRepository.findByEmail(email);
+        return utente.isPresent();
+    }
 }
