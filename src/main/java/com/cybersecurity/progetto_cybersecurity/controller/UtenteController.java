@@ -1,8 +1,10 @@
 package com.cybersecurity.progetto_cybersecurity.controller;
 
 
+import com.cybersecurity.progetto_cybersecurity.controller.dto.ClienteDTO;
 import com.cybersecurity.progetto_cybersecurity.controller.dto.UtenteDTO;
 import com.cybersecurity.progetto_cybersecurity.jwt.JwtUtil;
+import com.cybersecurity.progetto_cybersecurity.services.ClienteService;
 import com.cybersecurity.progetto_cybersecurity.services.UtenteService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -29,14 +31,35 @@ public class UtenteController {
     @Autowired
     private UtenteService utenteService;
 
+    @Autowired
+    private ClienteService clienteService;
+
     @PostMapping("/registrazione")
     public ResponseEntity<String> registraUtente(@RequestBody UtenteDTO utente) {
         if(utenteService.existUtente(utente.getEmail())) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Utente già registrato con questa email.");
         }
-        // Imposta la password hashata nell'oggetto utente
-        utente.setPassword(generateSHA256Hash(utente.getPassword()));
-        utenteService.saveUtente(utente);
+
+        UtenteDTO userSaved = utenteService.saveUtente(utente);
+        ClienteDTO clienteDTO=clienteService.getClienteByDocumento(utente.getDocumento());
+        if(clienteDTO==null){
+            clienteDTO=new ClienteDTO();
+            clienteDTO.setNome(utente.getNome());
+            clienteDTO.setCognome(utente.getCognome());
+            clienteDTO.setDocumento(utente.getDocumento());
+            clienteDTO.setDataNascita(utente.getDataNascita());
+            clienteDTO.setIdUtente(userSaved.getId());
+            clienteDTO.setSesso(utente.getSesso());
+        }else{
+            if(clienteDTO.getIdUtente()==null) {
+                clienteDTO.setIdUtente(userSaved.getId());
+            }else{
+                utenteService.deleteUtente(userSaved.getEmail());
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Utente già registrato con il documento indicato.");
+            }
+        }
+        clienteService.saveCliente(clienteDTO);
+
         return ResponseEntity.status(HttpStatus.CREATED).body("Utente Creato");
     }
 
@@ -71,27 +94,4 @@ public class UtenteController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Utente non trovato!");
         }
     }
-
-    private static String generateSHA256Hash(String input) {
-        try {
-            // Ottieni l'istanza del digest SHA-256
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
-
-            // Calcola l'hash della stringa input
-            byte[] hash = digest.digest(input.getBytes());
-
-            // Converte l'array di byte in una stringa esadecimale
-            StringBuilder hexString = new StringBuilder();
-            for (byte b : hash) {
-                // Converti ogni byte in un valore esadecimale e aggiungilo alla stringa
-                hexString.append(String.format("%02x", b));
-            }
-
-            // Restituisce l'hash in formato esadecimale
-            return hexString.toString();
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException("SHA-256 algorithm not found.", e);
-        }
-    }
-
 }

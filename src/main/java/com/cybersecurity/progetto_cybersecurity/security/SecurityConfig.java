@@ -30,7 +30,7 @@ public class SecurityConfig {
                 .cors() // Abilita la configurazione CORS
                 .and()
                 .authorizeHttpRequests()
-                .requestMatchers("/api/utenti/login").permitAll()  // Consenti l'accesso senza autenticazione al login
+                .requestMatchers("/api/utenti/login","/api/utenti/registrazione").permitAll()  // Consenti l'accesso senza autenticazione al login
                 .anyRequest().authenticated()  // Richiede autenticazione per tutte le altre richieste
                 .and()
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class); // Aggiungi il filtro JWT

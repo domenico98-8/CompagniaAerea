@@ -31,6 +31,9 @@ public class Cliente {
     @Column(name = "documento", nullable = false, length = 20, unique = true)
     private String documento;
 
+    @Column(name = "sesso", nullable = false, length = 2)
+    private String sesso;
+
     @OneToOne
     @JoinColumn(name = "id_utente", referencedColumnName = "id")
     private Utente utente;

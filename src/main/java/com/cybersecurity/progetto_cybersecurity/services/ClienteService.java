@@ -33,8 +33,8 @@ public class ClienteService {
 
     // Trova un cliente tramite il documento e restituisci il DTO
     public ClienteDTO getClienteByDocumento(String documento) {
-        Cliente cliente = clienteRepository.findByDocumento(documento);
-        return ClienteMapper.toDTO(cliente);
+        Optional<Cliente> cliente = clienteRepository.findByDocumento(documento);
+        return cliente.map(ClienteMapper::toDTO).orElse(null);
     }
 
     // Salva un nuovo cliente (crea entità e restituisce il DTO)

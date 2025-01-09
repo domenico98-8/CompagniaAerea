@@ -16,6 +16,7 @@ public class ClienteMapper {
         dto.setCognome(cliente.getCognome());
         dto.setDataNascita(cliente.getDataNascita());
         dto.setDocumento(cliente.getDocumento());
+        dto.setSesso(cliente.getSesso());
 
         if (cliente.getUtente() != null) {
             dto.setIdUtente(cliente.getUtente().getId());
@@ -34,7 +35,7 @@ public class ClienteMapper {
         cliente.setCognome(dto.getCognome());
         cliente.setDataNascita(dto.getDataNascita());
         cliente.setDocumento(dto.getDocumento());
-
+        cliente.setSesso(dto.getSesso());
         // Imposta l'utente, se necessario, a partire dall'ID (opzionale)
         if (dto.getIdUtente() != null) {
             Utente utente = new Utente();
