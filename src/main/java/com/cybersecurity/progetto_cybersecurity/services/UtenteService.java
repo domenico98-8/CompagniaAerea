@@ -45,4 +45,9 @@ public class UtenteService {
         Optional<Utente> utente=utenteRepository.findByEmail(email);
         return utente.isPresent();
     }
+
+    public void deleteUtente(String email) {
+        Optional<Utente> utente=utenteRepository.findByEmail(email);
+        utente.ifPresent(value -> utenteRepository.delete(value));
+    }
 }

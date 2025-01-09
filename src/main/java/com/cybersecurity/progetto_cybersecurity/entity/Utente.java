@@ -16,8 +16,6 @@ public class Utente {
 
     private String password;
 
-    private String ruolo; // Es. ADMIN o USER
-
     @OneToOne(mappedBy = "utente")
     private Cliente cliente;
 }

@@ -11,6 +11,7 @@ public class ClienteDTO {
     private String cognome;
     private Date dataNascita;
     private String documento;
+    private String sesso;
     private Long idUtente;
 
 }

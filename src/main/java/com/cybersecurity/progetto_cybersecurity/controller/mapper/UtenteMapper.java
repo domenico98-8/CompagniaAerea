@@ -15,7 +15,6 @@ public class UtenteMapper {
         UtenteDTO dto = new UtenteDTO();
         dto.setId(utente.getId());
         dto.setEmail(utente.getEmail());
-        dto.setRuolo(utente.getRuolo());
         dto.setPassword(utente.getPassword());
         return dto;
     }
@@ -28,7 +27,6 @@ public class UtenteMapper {
         Utente utente = new Utente();
         utente.setId(dto.getId());
         utente.setEmail(dto.getEmail());
-        utente.setRuolo(dto.getRuolo());
         utente.setPassword(dto.getPassword());
         return utente;
     }
