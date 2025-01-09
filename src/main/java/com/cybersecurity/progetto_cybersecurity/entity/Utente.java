@@ -11,9 +11,6 @@ public class Utente {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String nome;
-    private String cognome;
-
     @Column(unique = true, nullable = false)
     private String email;
 
