@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class VoloService {
@@ -38,6 +39,11 @@ public class VoloService {
         LocalDateTime maxTime =volo.getDataPartenza().toLocalDate().atTime(LocalTime.MAX);
         List<VoloDTO> voliDTO=voloMapper.toDTOList(voloRepository.findVoloByFromToDate(volo.getPartenzaDa(),volo.getDestinazioneA(),volo.getDataPartenza(), maxTime));
         return voliDTO;
+    }
+
+    public Long getIdVoloByCodiceVolo(String codiceVolo) {
+        Optional<Volo> volo = voloRepository.findVoloByCodiceVolo(codiceVolo);
+        return volo.map(Volo::getId).orElse(null);
     }
 
     public Volo salvaVolo(Volo volo) {

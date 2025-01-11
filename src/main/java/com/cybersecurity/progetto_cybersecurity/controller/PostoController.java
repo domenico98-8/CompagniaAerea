@@ -4,6 +4,7 @@ import com.cybersecurity.progetto_cybersecurity.controller.dto.PostoDTO;
 import com.cybersecurity.progetto_cybersecurity.controller.dto.VoloPostoDTO;
 import com.cybersecurity.progetto_cybersecurity.entity.VoloPosto;
 import com.cybersecurity.progetto_cybersecurity.services.PostoService;
+import com.cybersecurity.progetto_cybersecurity.utility.VoloPostoResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,7 +34,7 @@ public class PostoController {
 
     // GET: Ottieni un posto specifico in base al Codice Volo
     @GetMapping("/findByCodiceVolo/{codiceVolo}")
-    public ResponseEntity<List<VoloPostoDTO>> getPostoByVolo(@PathVariable String codiceVolo) {
+    public ResponseEntity<List<VoloPostoResponse>> getPostoByVolo(@PathVariable String codiceVolo) {
         return ResponseEntity.ok(postoService.getPostiByCodiceVolo(codiceVolo));
 
     }

@@ -12,7 +12,7 @@ public class PrenotazioneDTO {
     private Long id;
     private Long idVolo;
     private Long idPosto;
-    private Long idUtente;
+    private Long idCliente;
     private LocalDateTime dataPrenotazione;
     private double costo;
 }

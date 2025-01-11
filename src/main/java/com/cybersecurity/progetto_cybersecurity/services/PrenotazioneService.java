@@ -2,14 +2,8 @@ package com.cybersecurity.progetto_cybersecurity.services;
 
 import com.cybersecurity.progetto_cybersecurity.controller.dto.PrenotazioneDTO;
 import com.cybersecurity.progetto_cybersecurity.controller.mapper.PrenotazioneMapper;
-import com.cybersecurity.progetto_cybersecurity.entity.Posto;
-import com.cybersecurity.progetto_cybersecurity.entity.Prenotazione;
-import com.cybersecurity.progetto_cybersecurity.entity.Utente;
-import com.cybersecurity.progetto_cybersecurity.entity.Volo;
-import com.cybersecurity.progetto_cybersecurity.repository.PostoRepository;
-import com.cybersecurity.progetto_cybersecurity.repository.PrenotazioneRepository;
-import com.cybersecurity.progetto_cybersecurity.repository.UtenteRepository;
-import com.cybersecurity.progetto_cybersecurity.repository.VoloRepository;
+import com.cybersecurity.progetto_cybersecurity.entity.*;
+import com.cybersecurity.progetto_cybersecurity.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,13 +17,16 @@ public class PrenotazioneService {
     private PrenotazioneRepository prenotazioneRepository;
 
     @Autowired
+    private PrenotazioneMapper prenotazioneMapper;
+
+    @Autowired
     private VoloRepository voloRepository;
 
     @Autowired
     private PostoRepository postoRepository;
 
     @Autowired
-    private UtenteRepository utenteRepository;
+    private ClienteRepository clienteRepository;
 
     // Ottieni tutte le prenotazioni
     public List<PrenotazioneDTO> getAllPrenotazioni() {
@@ -51,16 +48,16 @@ public class PrenotazioneService {
                 .orElseThrow(() -> new RuntimeException("Volo non trovato"));
         Posto posto = postoRepository.findById(prenotazioneDTO.getIdPosto())
                 .orElseThrow(() -> new RuntimeException("Posto non trovato"));
-        Utente utente = null;
-        if (prenotazioneDTO.getIdUtente() != null) {
-            utente = utenteRepository.findById(prenotazioneDTO.getIdUtente())
+        Cliente cliente = null;
+        if (prenotazioneDTO.getIdCliente() != null) {
+            cliente = clienteRepository.findById(prenotazioneDTO.getIdCliente())
                     .orElseThrow(() -> new RuntimeException("Utente non trovato"));
         }
 
-        Prenotazione prenotazione = PrenotazioneMapper.prenotazioneDTOToPrenotazione(prenotazioneDTO);
+        Prenotazione prenotazione = prenotazioneMapper.prenotazioneDTOToPrenotazione(prenotazioneDTO);
         prenotazione.setVolo(volo);
         prenotazione.setPosto(posto);
-        prenotazione.setUtente(utente);
+        prenotazione.setCliente(cliente);
 
         Prenotazione createdPrenotazione = prenotazioneRepository.save(prenotazione);
         return PrenotazioneMapper.prenotazioneToPrenotazioneDTO(createdPrenotazione);
@@ -71,7 +68,7 @@ public class PrenotazioneService {
         if (!prenotazioneRepository.existsById(id)) {
             throw new RuntimeException("Prenotazione non trovata");
         }
-        Prenotazione prenotazione = PrenotazioneMapper.prenotazioneDTOToPrenotazione(prenotazioneDTO);
+        Prenotazione prenotazione = prenotazioneMapper.prenotazioneDTOToPrenotazione(prenotazioneDTO);
         prenotazione.setId(id);
         Prenotazione updatedPrenotazione = prenotazioneRepository.save(prenotazione);
         return PrenotazioneMapper.prenotazioneToPrenotazioneDTO(updatedPrenotazione);
@@ -86,7 +83,12 @@ public class PrenotazioneService {
     }
 
     public PrenotazioneDTO savePrenotazione(PrenotazioneDTO prenotazione) {
-        Prenotazione prenotazione1=PrenotazioneMapper.prenotazioneDTOToPrenotazione(prenotazione);
+        Prenotazione prenotazione1=prenotazioneMapper.prenotazioneDTOToPrenotazione(prenotazione);
         return PrenotazioneMapper.prenotazioneToPrenotazioneDTO(prenotazioneRepository.save(prenotazione1));
+    }
+
+    public void saveAll(List<PrenotazioneDTO>prenotazioni){
+        List<Prenotazione> entity=prenotazioni.stream().map(prenotazioneMapper::prenotazioneDTOToPrenotazione).toList();
+        prenotazioneRepository.saveAll(entity);
     }
 }

@@ -2,7 +2,7 @@ package com.cybersecurity.progetto_cybersecurity.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import java.sql.Timestamp;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -26,8 +26,8 @@ public class Prenotazione {
     private Posto posto;
 
     @ManyToOne
-    @JoinColumn(name = "id_utente", referencedColumnName = "id")
-    private Utente utente;
+    @JoinColumn(name = "id_cliente", referencedColumnName = "id")
+    private Cliente cliente;
 
     @Column(name = "data_prenotazione")
     private LocalDateTime dataPrenotazione;

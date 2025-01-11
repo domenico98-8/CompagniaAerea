@@ -4,12 +4,13 @@ import com.cybersecurity.progetto_cybersecurity.controller.dto.PostoDTO;
 import com.cybersecurity.progetto_cybersecurity.controller.dto.VoloPostoDTO;
 import com.cybersecurity.progetto_cybersecurity.controller.mapper.PostoMapper;
 import com.cybersecurity.progetto_cybersecurity.entity.Posto;
-import com.cybersecurity.progetto_cybersecurity.entity.VoloPosto;
 import com.cybersecurity.progetto_cybersecurity.repository.PostoRepository;
+import com.cybersecurity.progetto_cybersecurity.utility.VoloPostoResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -58,7 +59,16 @@ public class PostoService {
         postoRepository.deleteById(id);
     }
 
-    public List<VoloPostoDTO> getPostiByCodiceVolo(String codiceVolo) {
+    public List<VoloPostoResponse> getPostiByCodiceVolo(String codiceVolo) {
         return postoRepository.findByVolo(codiceVolo);
+    }
+
+    public PostoDTO getPostoByNumeroPosto(PostoDTO posto) {
+       Optional<Posto> postoPrenotato= postoRepository.getPostoByNumeroPosto(posto.getNumeroPosto());
+       return postoPrenotato.map(PostoMapper::postoToPostoDTO).orElse(null);
+    }
+
+    public void save(PostoDTO postoDTO) {
+        postoRepository.save(new Posto());
     }
 }

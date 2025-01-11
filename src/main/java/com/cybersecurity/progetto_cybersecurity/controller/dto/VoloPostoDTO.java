@@ -5,11 +5,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 public class VoloPostoDTO {
-
+    private Long idVolo;
+    private Long idPosto;
     private boolean stato;
-    private String numeroPosto;
-
 }
+
