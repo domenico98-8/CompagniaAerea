@@ -1,6 +1,7 @@
 package com.cybersecurity.progetto_cybersecurity.repository;
 
 
+import com.cybersecurity.progetto_cybersecurity.entity.Cliente;
 import com.cybersecurity.progetto_cybersecurity.entity.Volo;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -21,5 +22,5 @@ public interface VoloRepository extends JpaRepository<Volo, Long> {
                                     @Param("fromDate") LocalDateTime fromDate,
                                     @Param("maxDate") LocalDateTime max
                                     );
-
+    Optional<Volo> findVoloByCodiceVolo(String codiceVolo);
 }
