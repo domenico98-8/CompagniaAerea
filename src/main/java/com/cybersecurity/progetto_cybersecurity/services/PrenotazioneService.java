@@ -28,6 +28,10 @@ public class PrenotazioneService {
     @Autowired
     private ClienteRepository clienteRepository;
 
+    public List<Prenotazione> getPrenotazioniFromIdUtente(Long idUtente) {
+        return prenotazioneRepository.getPrenotazioneByIdUtente(idUtente);
+    }
+
     // Ottieni tutte le prenotazioni
     public List<PrenotazioneDTO> getAllPrenotazioni() {
         return prenotazioneRepository.findAll().stream()

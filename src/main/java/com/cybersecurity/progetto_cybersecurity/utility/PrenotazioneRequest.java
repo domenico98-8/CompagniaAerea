@@ -17,4 +17,5 @@ public class PrenotazioneRequest {
     List<PostoDTO> posti;
     Double costo;
     String volo;
+    Long idUtente;
 }

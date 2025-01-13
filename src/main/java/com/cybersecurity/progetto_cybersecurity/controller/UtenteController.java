@@ -85,7 +85,7 @@ public class UtenteController {
             if(password.equals(utenteDTO.getPassword())){
                 // Genera un token
                 String token = jwtUtil.generateToken(password);
-                return ResponseEntity.ok(token);
+                return ResponseEntity.ok(token+";"+userDto.get().getId());
             }else{
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenziali non valide");
             }

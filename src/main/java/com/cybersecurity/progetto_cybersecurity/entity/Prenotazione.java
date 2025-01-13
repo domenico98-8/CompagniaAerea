@@ -17,6 +17,9 @@ public class Prenotazione {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name="id_utente",insertable=false, updatable=false)
+    private Long idUtente;
+
     @ManyToOne
     @JoinColumn(name = "id_volo", referencedColumnName = "id", nullable = false)
     private Volo volo;
@@ -29,9 +32,14 @@ public class Prenotazione {
     @JoinColumn(name = "id_cliente", referencedColumnName = "id")
     private Cliente cliente;
 
+    @ManyToOne
+    @JoinColumn(name = "id_utente", referencedColumnName = "id")
+    private Utente utente;
+
     @Column(name = "data_prenotazione")
     private LocalDateTime dataPrenotazione;
 
     @Column(name = "costo")
     private double costo;
+
 }

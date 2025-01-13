@@ -4,6 +4,7 @@ import com.cybersecurity.progetto_cybersecurity.controller.dto.PrenotazioneDTO;
 import com.cybersecurity.progetto_cybersecurity.entity.*;
 import com.cybersecurity.progetto_cybersecurity.repository.ClienteRepository;
 import com.cybersecurity.progetto_cybersecurity.repository.PostoRepository;
+import com.cybersecurity.progetto_cybersecurity.repository.UtenteRepository;
 import com.cybersecurity.progetto_cybersecurity.repository.VoloRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -23,6 +24,9 @@ public class PrenotazioneMapper {
     @Autowired
     private VoloRepository voloRepository;
 
+    @Autowired
+    private UtenteRepository utenteRepository;
+
     // Mappa Prenotazione -> PrenotazioneDTO
     public static PrenotazioneDTO prenotazioneToPrenotazioneDTO(Prenotazione prenotazione) {
         if (prenotazione == null) {
@@ -35,6 +39,7 @@ public class PrenotazioneMapper {
                 .idCliente(prenotazione.getCliente() != null ? prenotazione.getCliente().getId() : null)
                 .dataPrenotazione(prenotazione.getDataPrenotazione())
                 .costo(prenotazione.getCosto())
+                .idUtente(prenotazione.getUtente().getId())
                 .build();
     }
 
@@ -51,6 +56,8 @@ public class PrenotazioneMapper {
         prenotazione.setCliente(cliente.orElse(null));
         Optional<Volo> volo=voloRepository.findById(prenotazioneDTO.getIdVolo());
         prenotazione.setVolo(volo.orElse(null));
+        Optional<Utente> utente=utenteRepository.findById(prenotazioneDTO.getIdUtente());
+        prenotazione.setUtente(utente.orElse(null));
         prenotazione.setCosto(prenotazioneDTO.getCosto());
         prenotazione.setDataPrenotazione(LocalDateTime.now());
 
