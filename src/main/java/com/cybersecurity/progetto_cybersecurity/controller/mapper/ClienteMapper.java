@@ -3,7 +3,9 @@ package com.cybersecurity.progetto_cybersecurity.controller.mapper;
 import com.cybersecurity.progetto_cybersecurity.controller.dto.ClienteDTO;
 import com.cybersecurity.progetto_cybersecurity.entity.Cliente;
 import com.cybersecurity.progetto_cybersecurity.entity.Utente;
+import org.springframework.stereotype.Component;
 
+@Component
 public class ClienteMapper {
 
     public static ClienteDTO toDTO(Cliente cliente) {

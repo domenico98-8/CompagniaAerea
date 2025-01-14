@@ -5,25 +5,17 @@ import com.cybersecurity.progetto_cybersecurity.controller.mapper.ClienteMapper;
 import com.cybersecurity.progetto_cybersecurity.entity.Cliente;
 import com.cybersecurity.progetto_cybersecurity.entity.Utente;
 import com.cybersecurity.progetto_cybersecurity.repository.ClienteRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class ClienteService {
 
     @Autowired
     private ClienteRepository clienteRepository;
-
-    // Trova tutti i clienti e restituisci una lista di DTO
-    public List<ClienteDTO> getAllClienti() {
-        return clienteRepository.findAll().stream()
-                .map(ClienteMapper::toDTO)
-                .collect(Collectors.toList());
-    }
 
     // Trova un cliente per ID e restituisci il DTO
     public Optional<ClienteDTO> getClienteById(Long id) {
@@ -32,12 +24,14 @@ public class ClienteService {
     }
 
     // Trova un cliente tramite il documento e restituisci il DTO
+    @Transactional
     public ClienteDTO getClienteByDocumento(String documento) {
         Optional<Cliente> cliente = clienteRepository.findByDocumento(documento);
         return cliente.map(ClienteMapper::toDTO).orElse(null);
     }
 
     // Salva un nuovo cliente (crea entità e restituisce il DTO)
+    @Transactional
     public ClienteDTO saveCliente(ClienteDTO clienteDTO) {
         Cliente cliente = ClienteMapper.toEntity(clienteDTO);
         Cliente savedCliente = clienteRepository.save(cliente);
@@ -45,6 +39,7 @@ public class ClienteService {
     }
 
     // Aggiorna un cliente esistente e restituisce il DTO
+    @Transactional
     public ClienteDTO updateCliente(Long id, ClienteDTO clienteDTO) {
         Cliente cliente = clienteRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Cliente non trovato con id " + id));
@@ -67,6 +62,7 @@ public class ClienteService {
     }
 
     // Elimina un cliente per ID
+    @Transactional
     public void deleteCliente(Long id) {
         Cliente cliente = clienteRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Cliente non trovato con id " + id));

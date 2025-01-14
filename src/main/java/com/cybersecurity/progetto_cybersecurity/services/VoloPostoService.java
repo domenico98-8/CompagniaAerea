@@ -5,6 +5,7 @@ import com.cybersecurity.progetto_cybersecurity.controller.mapper.VoloPostoMappe
 import com.cybersecurity.progetto_cybersecurity.entity.VoloPosto;
 import com.cybersecurity.progetto_cybersecurity.entity.VoloPostoId;
 import com.cybersecurity.progetto_cybersecurity.repository.VoloPostoRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,17 +24,13 @@ public class VoloPostoService {
     @Autowired
     private VoloPostoMapper voloPostoMapper;
 
-    public List<VoloPostoDTO> getAll() {
-        return voloPostoRepository.findAll().stream()
-                .map(voloPostoMapper::toDto)
-                .collect(Collectors.toList());
-    }
-
+    @Transactional
     public VoloPostoDTO getById(VoloPostoId id) {
         Optional<VoloPosto> entity = voloPostoRepository.findById(id);
         return entity.map(voloPostoMapper::toDto).orElse(null);
     }
 
+    @Transactional
     public VoloPostoDTO save(VoloPostoDTO dto) {
         VoloPosto entity = voloPostoMapper.toEntity(dto);
         // Associazioni con `Volo` e `Posto` devono essere gestite qui
@@ -41,6 +38,7 @@ public class VoloPostoService {
         return voloPostoMapper.toDto(savedEntity);
     }
 
+    @Transactional
     public void saveAll(List<VoloPostoDTO> dtoList) {
         List<VoloPosto> entities = dtoList.stream()
                 .map(voloPostoMapper::toEntity)
@@ -50,7 +48,7 @@ public class VoloPostoService {
         voloPostoRepository.saveAll(entities);
     }
 
-
+    @Transactional
     public void deleteById(VoloPostoId id) {
         voloPostoRepository.deleteById(id);
     }

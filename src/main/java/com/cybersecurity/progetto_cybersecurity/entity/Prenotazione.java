@@ -21,6 +21,10 @@ public class Prenotazione {
     private Long idUtente;
 
     @ManyToOne
+    @JoinColumn(name ="id_bagalio", referencedColumnName = "id")
+    private Bagaglio bagalio;
+
+    @ManyToOne
     @JoinColumn(name = "id_volo", referencedColumnName = "id", nullable = false)
     private Volo volo;
 

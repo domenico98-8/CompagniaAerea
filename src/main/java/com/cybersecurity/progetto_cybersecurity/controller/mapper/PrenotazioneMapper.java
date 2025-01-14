@@ -2,10 +2,7 @@ package com.cybersecurity.progetto_cybersecurity.controller.mapper;
 
 import com.cybersecurity.progetto_cybersecurity.controller.dto.PrenotazioneDTO;
 import com.cybersecurity.progetto_cybersecurity.entity.*;
-import com.cybersecurity.progetto_cybersecurity.repository.ClienteRepository;
-import com.cybersecurity.progetto_cybersecurity.repository.PostoRepository;
-import com.cybersecurity.progetto_cybersecurity.repository.UtenteRepository;
-import com.cybersecurity.progetto_cybersecurity.repository.VoloRepository;
+import com.cybersecurity.progetto_cybersecurity.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -27,6 +24,9 @@ public class PrenotazioneMapper {
     @Autowired
     private UtenteRepository utenteRepository;
 
+    @Autowired
+    private BagaglioRepository bagaglioRepository;
+
     // Mappa Prenotazione -> PrenotazioneDTO
     public static PrenotazioneDTO prenotazioneToPrenotazioneDTO(Prenotazione prenotazione) {
         if (prenotazione == null) {
@@ -37,6 +37,7 @@ public class PrenotazioneMapper {
                 .idVolo(prenotazione.getVolo().getId())
                 .idPosto(prenotazione.getPosto().getId())
                 .idCliente(prenotazione.getCliente() != null ? prenotazione.getCliente().getId() : null)
+                .idBagaglio(prenotazione.getBagalio() != null ? prenotazione.getBagalio().getId() : null)
                 .dataPrenotazione(prenotazione.getDataPrenotazione())
                 .costo(prenotazione.getCosto())
                 .idUtente(prenotazione.getUtente().getId())
@@ -58,6 +59,8 @@ public class PrenotazioneMapper {
         prenotazione.setVolo(volo.orElse(null));
         Optional<Utente> utente=utenteRepository.findById(prenotazioneDTO.getIdUtente());
         prenotazione.setUtente(utente.orElse(null));
+        Optional<Bagaglio> bagaglio=bagaglioRepository.findById(prenotazioneDTO.getIdBagaglio());
+        prenotazione.setBagalio(bagaglio.orElse(null));
         prenotazione.setCosto(prenotazioneDTO.getCosto());
         prenotazione.setDataPrenotazione(LocalDateTime.now());
 

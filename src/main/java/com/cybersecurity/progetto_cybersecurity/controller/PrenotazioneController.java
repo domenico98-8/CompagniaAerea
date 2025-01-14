@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "http://localhost:4200")
 @RestController
@@ -92,6 +91,7 @@ public class PrenotazioneController {
                     posto.getId(),
                     passeggero.getId(),
                     prenotazione.getIdUtente(),
+                    null,
                     LocalDateTime.now(),
                     prenotazione.getCosto()
             );
@@ -104,6 +104,11 @@ public class PrenotazioneController {
         prenotazioneService.saveAll(listPrenotazioni);
 
         return ResponseEntity.status(HttpStatus.ACCEPTED).body("Volo Prenotato!");
+    }
+
+    @GetMapping("/getClientiFromPrenotazione/{id}")
+    public ResponseEntity<List<ClienteDTO>> getClientiFromPrenotazioe(@PathVariable Long id){
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(prenotazioneService.getClienteByIdPrenotazione(id));
     }
 
     public <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {

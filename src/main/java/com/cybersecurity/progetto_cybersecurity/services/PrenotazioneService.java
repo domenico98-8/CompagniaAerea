@@ -1,14 +1,17 @@
 package com.cybersecurity.progetto_cybersecurity.services;
 
+import com.cybersecurity.progetto_cybersecurity.controller.dto.ClienteDTO;
 import com.cybersecurity.progetto_cybersecurity.controller.dto.PrenotazioneDTO;
+import com.cybersecurity.progetto_cybersecurity.controller.mapper.ClienteMapper;
 import com.cybersecurity.progetto_cybersecurity.controller.mapper.PrenotazioneMapper;
 import com.cybersecurity.progetto_cybersecurity.entity.*;
 import com.cybersecurity.progetto_cybersecurity.repository.*;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class PrenotazioneService {
@@ -28,18 +31,13 @@ public class PrenotazioneService {
     @Autowired
     private ClienteRepository clienteRepository;
 
+    @Transactional
     public List<Prenotazione> getPrenotazioniFromIdUtente(Long idUtente) {
         return prenotazioneRepository.getPrenotazioneByIdUtente(idUtente);
     }
 
-    // Ottieni tutte le prenotazioni
-    public List<PrenotazioneDTO> getAllPrenotazioni() {
-        return prenotazioneRepository.findAll().stream()
-                .map(PrenotazioneMapper::prenotazioneToPrenotazioneDTO)
-                .collect(Collectors.toList());
-    }
-
     // Ottieni una prenotazione per ID
+    @Transactional
     public PrenotazioneDTO getPrenotazioneById(Long id) {
         Prenotazione prenotazione = prenotazioneRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Prenotazione non trovata"));
@@ -47,6 +45,7 @@ public class PrenotazioneService {
     }
 
     // Crea una nuova prenotazione
+    @Transactional
     public PrenotazioneDTO createPrenotazione(PrenotazioneDTO prenotazioneDTO) {
         Volo volo = voloRepository.findById(prenotazioneDTO.getIdVolo())
                 .orElseThrow(() -> new RuntimeException("Volo non trovato"));
@@ -68,6 +67,7 @@ public class PrenotazioneService {
     }
 
     // Aggiorna una prenotazione esistente
+    @Transactional
     public PrenotazioneDTO updatePrenotazione(Long id, PrenotazioneDTO prenotazioneDTO) {
         if (!prenotazioneRepository.existsById(id)) {
             throw new RuntimeException("Prenotazione non trovata");
@@ -79,6 +79,7 @@ public class PrenotazioneService {
     }
 
     // Elimina una prenotazione
+    @Transactional
     public void deletePrenotazione(Long id) {
         if (!prenotazioneRepository.existsById(id)) {
             throw new RuntimeException("Prenotazione non trovata");
@@ -86,13 +87,23 @@ public class PrenotazioneService {
         prenotazioneRepository.deleteById(id);
     }
 
+    @Transactional
     public PrenotazioneDTO savePrenotazione(PrenotazioneDTO prenotazione) {
         Prenotazione prenotazione1=prenotazioneMapper.prenotazioneDTOToPrenotazione(prenotazione);
         return PrenotazioneMapper.prenotazioneToPrenotazioneDTO(prenotazioneRepository.save(prenotazione1));
     }
 
+    @Transactional
     public void saveAll(List<PrenotazioneDTO>prenotazioni){
         List<Prenotazione> entity=prenotazioni.stream().map(prenotazioneMapper::prenotazioneDTOToPrenotazione).toList();
         prenotazioneRepository.saveAll(entity);
+    }
+
+    @Transactional
+    public List<ClienteDTO> getClienteByIdPrenotazione(Long idPrenotazione) {
+        List<Cliente> clientiPrenotazione=prenotazioneRepository.getClientebyIdPrenotazione(idPrenotazione);
+        List<ClienteDTO> clienteDTOS =new ArrayList<>();
+        clientiPrenotazione.forEach(prenotazioneDTO->{clienteDTOS.add(ClienteMapper.toDTO(prenotazioneDTO));});
+        return clienteDTOS;
     }
 }

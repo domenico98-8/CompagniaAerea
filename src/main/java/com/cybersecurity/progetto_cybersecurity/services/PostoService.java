@@ -1,11 +1,11 @@
 package com.cybersecurity.progetto_cybersecurity.services;
 
 import com.cybersecurity.progetto_cybersecurity.controller.dto.PostoDTO;
-import com.cybersecurity.progetto_cybersecurity.controller.dto.VoloPostoDTO;
 import com.cybersecurity.progetto_cybersecurity.controller.mapper.PostoMapper;
 import com.cybersecurity.progetto_cybersecurity.entity.Posto;
 import com.cybersecurity.progetto_cybersecurity.repository.PostoRepository;
 import com.cybersecurity.progetto_cybersecurity.utility.VoloPostoResponse;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +20,7 @@ public class PostoService {
     private PostoRepository postoRepository;
 
     // Ottieni tutti i posti e restituisci i DTO
+    @Transactional
     public List<PostoDTO> getAllPosti() {
         return postoRepository.findAll().stream()
                 .map(PostoMapper::postoToPostoDTO)  // Mapper manuale
@@ -27,6 +28,7 @@ public class PostoService {
     }
 
     // Ottieni un posto per ID e restituisci il DTO
+    @Transactional
     public PostoDTO getPostoById(Long id) {
         Posto posto = postoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Posto non trovato"));
@@ -34,6 +36,7 @@ public class PostoService {
     }
 
     // Crea un nuovo posto e restituisci il DTO
+    @Transactional
     public PostoDTO createPosto(PostoDTO postoDTO) {
         Posto posto = PostoMapper.postoDTOToPosto(postoDTO);  // Mapper manuale
         Posto createdPosto = postoRepository.save(posto);
@@ -52,6 +55,7 @@ public class PostoService {
     }
 
     // Elimina un posto
+    @Transactional
     public void deletePosto(Long id) {
         if (!postoRepository.existsById(id)) {
             throw new RuntimeException("Posto non trovato");
@@ -59,10 +63,12 @@ public class PostoService {
         postoRepository.deleteById(id);
     }
 
+    @Transactional
     public List<VoloPostoResponse> getPostiByCodiceVolo(String codiceVolo) {
         return postoRepository.findByVolo(codiceVolo);
     }
 
+    @Transactional
     public PostoDTO getPostoByNumeroPosto(PostoDTO posto) {
        Optional<Posto> postoPrenotato= postoRepository.getPostoByNumeroPosto(posto.getNumeroPosto());
        return postoPrenotato.map(PostoMapper::postoToPostoDTO).orElse(null);

@@ -14,6 +14,7 @@ public class PrenotazioneDTO {
     private Long idPosto;
     private Long idCliente;
     private Long idUtente;
+    private Long idBagaglio;
     private LocalDateTime dataPrenotazione;
     private double costo;
 }
