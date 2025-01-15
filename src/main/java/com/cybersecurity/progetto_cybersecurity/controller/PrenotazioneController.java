@@ -6,6 +6,7 @@ import com.cybersecurity.progetto_cybersecurity.controller.dto.PrenotazioneDTO;
 import com.cybersecurity.progetto_cybersecurity.controller.dto.VoloPostoDTO;
 import com.cybersecurity.progetto_cybersecurity.entity.Prenotazione;
 import com.cybersecurity.progetto_cybersecurity.services.*;
+import com.cybersecurity.progetto_cybersecurity.utility.CheckinRequest;
 import com.cybersecurity.progetto_cybersecurity.utility.PrenotazioneRequest;
 import com.cybersecurity.progetto_cybersecurity.utility.PrenotazioneResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -109,6 +110,12 @@ public class PrenotazioneController {
     @GetMapping("/getClientiFromPrenotazione/{id}")
     public ResponseEntity<List<ClienteDTO>> getClientiFromPrenotazioe(@PathVariable Long id){
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(prenotazioneService.getClienteByIdPrenotazione(id));
+    }
+
+    @PostMapping("/checkin")
+    public ResponseEntity<String> checkin(@RequestBody List<CheckinRequest> checkin) {
+
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body("Check-in Effettuato!");
     }
 
     public <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
