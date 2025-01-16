@@ -1,39 +1,44 @@
 package com.cybersecurity.progetto_cybersecurity.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "prenotazione")
+@Table(name = "prenotazione", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"id_volo", "id", "id_cliente", "id_posto"})
+})
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@ToString
 public class Prenotazione {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @EmbeddedId
+    private PrenotazioneId id;  // La chiave primaria composta
 
-    @Column(name="id_utente",insertable=false, updatable=false)
-    private Long idUtente;
-
-    @ManyToOne
-    @JoinColumn(name ="id_bagalio", referencedColumnName = "id")
-    private Bagaglio bagalio;
+    @Column(name = "id_bagaglio", insertable=false, updatable=false)
+    private Long idBagaglio;
 
     @ManyToOne
-    @JoinColumn(name = "id_volo", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "id_bagaglio", referencedColumnName = "id", insertable = false, updatable = false)
+    private Bagaglio bagaglio;
+
+    @ManyToOne
+    @JoinColumn(name = "id_volo", referencedColumnName = "id", insertable = false, updatable = false)
     private Volo volo;
 
     @ManyToOne
-    @JoinColumn(name = "id_posto", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "id_posto", referencedColumnName = "id", insertable = false, updatable = false)
     private Posto posto;
 
+    // Non è necessario mappare id_cliente separatamente poiché è parte della chiave primaria composta
     @ManyToOne
-    @JoinColumn(name = "id_cliente", referencedColumnName = "id")
+    @JoinColumn(name = "id_cliente", referencedColumnName = "id", insertable = false, updatable = false)
     private Cliente cliente;
 
     @ManyToOne
@@ -46,4 +51,6 @@ public class Prenotazione {
     @Column(name = "costo")
     private double costo;
 
+    @Column(name = "checkin")
+    private boolean checkin;
 }

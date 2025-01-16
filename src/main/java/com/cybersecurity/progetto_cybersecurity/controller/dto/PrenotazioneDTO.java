@@ -1,5 +1,6 @@
 package com.cybersecurity.progetto_cybersecurity.controller.dto;
 
+import com.cybersecurity.progetto_cybersecurity.entity.PrenotazioneId;
 import lombok.*;
 import java.time.LocalDateTime;
 
@@ -9,12 +10,10 @@ import java.time.LocalDateTime;
 @Builder
 public class PrenotazioneDTO {
 
-    private Long id;
-    private Long idVolo;
-    private Long idPosto;
-    private Long idCliente;
+    private PrenotazioneId prenotazioneId;
     private Long idUtente;
     private Long idBagaglio;
+    private boolean checkin;
     private LocalDateTime dataPrenotazione;
     private double costo;
 }

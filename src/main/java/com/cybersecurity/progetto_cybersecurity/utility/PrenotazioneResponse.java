@@ -13,4 +13,5 @@ public class PrenotazioneResponse {
     private String destinazione;
     private String orario;
     private String numero_passeggeri;
+    private Boolean checkin;
 }

@@ -38,22 +38,21 @@ public class PrenotazioneService {
 
     // Ottieni una prenotazione per ID
     @Transactional
-    public PrenotazioneDTO getPrenotazioneById(Long id) {
-        Prenotazione prenotazione = prenotazioneRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Prenotazione non trovata"));
-        return PrenotazioneMapper.prenotazioneToPrenotazioneDTO(prenotazione);
+    public List<PrenotazioneDTO> getPrenotazioneById(Long id) {
+        List<Prenotazione> prenotazione = prenotazioneRepository.getPrenotazioniById(id);
+        return prenotazione.stream().map(PrenotazioneMapper::prenotazioneToPrenotazioneDTO).toList();
     }
 
     // Crea una nuova prenotazione
     @Transactional
     public PrenotazioneDTO createPrenotazione(PrenotazioneDTO prenotazioneDTO) {
-        Volo volo = voloRepository.findById(prenotazioneDTO.getIdVolo())
+        Volo volo = voloRepository.findById(prenotazioneDTO.getPrenotazioneId().getId_volo())
                 .orElseThrow(() -> new RuntimeException("Volo non trovato"));
-        Posto posto = postoRepository.findById(prenotazioneDTO.getIdPosto())
+        Posto posto = postoRepository.findById(prenotazioneDTO.getPrenotazioneId().getId_posto())
                 .orElseThrow(() -> new RuntimeException("Posto non trovato"));
         Cliente cliente = null;
-        if (prenotazioneDTO.getIdCliente() != null) {
-            cliente = clienteRepository.findById(prenotazioneDTO.getIdCliente())
+        if (prenotazioneDTO.getPrenotazioneId().getId_cliente() != null) {
+            cliente = clienteRepository.findById(prenotazioneDTO.getPrenotazioneId().getId_cliente())
                     .orElseThrow(() -> new RuntimeException("Utente non trovato"));
         }
 
@@ -66,26 +65,6 @@ public class PrenotazioneService {
         return PrenotazioneMapper.prenotazioneToPrenotazioneDTO(createdPrenotazione);
     }
 
-    // Aggiorna una prenotazione esistente
-    @Transactional
-    public PrenotazioneDTO updatePrenotazione(Long id, PrenotazioneDTO prenotazioneDTO) {
-        if (!prenotazioneRepository.existsById(id)) {
-            throw new RuntimeException("Prenotazione non trovata");
-        }
-        Prenotazione prenotazione = prenotazioneMapper.prenotazioneDTOToPrenotazione(prenotazioneDTO);
-        prenotazione.setId(id);
-        Prenotazione updatedPrenotazione = prenotazioneRepository.save(prenotazione);
-        return PrenotazioneMapper.prenotazioneToPrenotazioneDTO(updatedPrenotazione);
-    }
-
-    // Elimina una prenotazione
-    @Transactional
-    public void deletePrenotazione(Long id) {
-        if (!prenotazioneRepository.existsById(id)) {
-            throw new RuntimeException("Prenotazione non trovata");
-        }
-        prenotazioneRepository.deleteById(id);
-    }
 
     @Transactional
     public PrenotazioneDTO savePrenotazione(PrenotazioneDTO prenotazione) {
@@ -105,5 +84,15 @@ public class PrenotazioneService {
         List<ClienteDTO> clienteDTOS =new ArrayList<>();
         clientiPrenotazione.forEach(prenotazioneDTO->{clienteDTOS.add(ClienteMapper.toDTO(prenotazioneDTO));});
         return clienteDTOS;
+    }
+
+    public Long getMaxIdPrenotazione() {
+        return prenotazioneRepository.getMaxId();
+    }
+
+    public Boolean isCheckin(Long idPrenotazione) {
+        long numCheck=prenotazioneRepository.isCheckin(idPrenotazione);
+        long numPass=prenotazioneRepository.countTotale(idPrenotazione);
+        return numCheck == numPass;
     }
 }

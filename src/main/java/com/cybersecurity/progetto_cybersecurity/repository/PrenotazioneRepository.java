@@ -2,6 +2,7 @@ package com.cybersecurity.progetto_cybersecurity.repository;
 
 import com.cybersecurity.progetto_cybersecurity.entity.Cliente;
 import com.cybersecurity.progetto_cybersecurity.entity.Prenotazione;
+import com.cybersecurity.progetto_cybersecurity.entity.PrenotazioneId;
 import org.hibernate.annotations.processing.SQL;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -9,9 +10,23 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface PrenotazioneRepository extends JpaRepository<Prenotazione, Long> {
-    List<Prenotazione> getPrenotazioneByIdUtente(Long idUtente);
+public interface PrenotazioneRepository extends JpaRepository<Prenotazione, PrenotazioneId> {
 
-    @Query("SELECT c FROM Prenotazione p INNER JOIN Cliente c on p.cliente.id=c.id and p.id=:idPrenotazione")
+    @Query("Select p FROM Prenotazione p where p.utente.id=:idUtente")
+    List<Prenotazione> getPrenotazioneByIdUtente(@Param("idUtente") Long idUtente);
+
+    @Query("SELECT p FROM Prenotazione p where p.id.id=:idPrenotazione")
+    List<Prenotazione> getPrenotazioniById(@Param("idPrenotazione") Long idPrenotazione);
+
+    @Query("SELECT c FROM Prenotazione p INNER JOIN Cliente c on p.cliente.id=c.id and p.id.id=:idPrenotazione")
     List<Cliente> getClientebyIdPrenotazione(@Param("idPrenotazione") Long idPrenotazione);
+
+    @Query("SELECT MAX(p.id.id) FROM Prenotazione p")
+    Long getMaxId();
+
+    @Query("SELECT COUNT(p) FROM Prenotazione p WHERE p.id.id = :idPrenotazione AND p.checkin = true")
+    Long isCheckin(@Param("idPrenotazione")Long idPrenotazione);
+
+    @Query("SELECT COUNT(p) FROM Prenotazione p WHERE p.id.id = :idPrenotazione")
+    long countTotale(@Param("idPrenotazione") Long idPrenotazione);
 }

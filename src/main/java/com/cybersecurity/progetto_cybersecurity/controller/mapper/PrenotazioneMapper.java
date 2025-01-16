@@ -33,14 +33,12 @@ public class PrenotazioneMapper {
             return null;
         }
         return PrenotazioneDTO.builder()
-                .id(prenotazione.getId())
-                .idVolo(prenotazione.getVolo().getId())
-                .idPosto(prenotazione.getPosto().getId())
-                .idCliente(prenotazione.getCliente() != null ? prenotazione.getCliente().getId() : null)
-                .idBagaglio(prenotazione.getBagalio() != null ? prenotazione.getBagalio().getId() : null)
+                .prenotazioneId(prenotazione.getId())
+                .idBagaglio(prenotazione.getBagaglio() != null ? prenotazione.getBagaglio().getId() : null)
                 .dataPrenotazione(prenotazione.getDataPrenotazione())
                 .costo(prenotazione.getCosto())
                 .idUtente(prenotazione.getUtente().getId())
+                .checkin(prenotazione.isCheckin())
                 .build();
     }
 
@@ -50,19 +48,23 @@ public class PrenotazioneMapper {
             return null;
         }
         Prenotazione prenotazione = new Prenotazione();
-        prenotazione.setId(prenotazioneDTO.getId());
-        Optional<Posto> posto =postoRepository.findById(prenotazioneDTO.getIdPosto());
+        prenotazione.setId(prenotazioneDTO.getPrenotazioneId());
+        Optional<Posto> posto =postoRepository.findById(prenotazioneDTO.getPrenotazioneId().getId_posto());
         prenotazione.setPosto(posto.orElse(null));
-        Optional<Cliente> cliente=clienteRepository.findById(prenotazioneDTO.getIdCliente());
+        Optional<Cliente> cliente=clienteRepository.findById(prenotazioneDTO.getPrenotazioneId().getId_cliente());
         prenotazione.setCliente(cliente.orElse(null));
-        Optional<Volo> volo=voloRepository.findById(prenotazioneDTO.getIdVolo());
+        Optional<Volo> volo=voloRepository.findById(prenotazioneDTO.getPrenotazioneId().getId_volo());
         prenotazione.setVolo(volo.orElse(null));
         Optional<Utente> utente=utenteRepository.findById(prenotazioneDTO.getIdUtente());
         prenotazione.setUtente(utente.orElse(null));
-        Optional<Bagaglio> bagaglio=bagaglioRepository.findById(prenotazioneDTO.getIdBagaglio());
-        prenotazione.setBagalio(bagaglio.orElse(null));
+        if(prenotazioneDTO.getIdBagaglio()!=null){
+            Optional<Bagaglio> bagaglio=bagaglioRepository.findById(prenotazioneDTO.getIdBagaglio());
+            prenotazione.setBagaglio(bagaglio.orElse(null));
+            prenotazione.setIdBagaglio(prenotazioneDTO.getIdBagaglio());
+        }
         prenotazione.setCosto(prenotazioneDTO.getCosto());
         prenotazione.setDataPrenotazione(LocalDateTime.now());
+        prenotazione.setCheckin(prenotazioneDTO.isCheckin());
 
         return prenotazione;
     }
