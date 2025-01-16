@@ -29,4 +29,6 @@ public interface PrenotazioneRepository extends JpaRepository<Prenotazione, Pren
 
     @Query("SELECT COUNT(p) FROM Prenotazione p WHERE p.id.id = :idPrenotazione")
     long countTotale(@Param("idPrenotazione") Long idPrenotazione);
+
+    PrenotazioneId id(PrenotazioneId id);
 }

@@ -1,6 +1,7 @@
 package com.cybersecurity.progetto_cybersecurity.services;
 
 import com.cybersecurity.progetto_cybersecurity.controller.dto.ClienteDTO;
+import com.cybersecurity.progetto_cybersecurity.controller.dto.PostoDTO;
 import com.cybersecurity.progetto_cybersecurity.controller.dto.PrenotazioneDTO;
 import com.cybersecurity.progetto_cybersecurity.controller.mapper.ClienteMapper;
 import com.cybersecurity.progetto_cybersecurity.controller.mapper.PrenotazioneMapper;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PrenotazioneService {
@@ -30,6 +32,9 @@ public class PrenotazioneService {
 
     @Autowired
     private ClienteRepository clienteRepository;
+
+    @Autowired
+    private VoloPostoRepository voloPostoRepository;
 
     @Transactional
     public List<Prenotazione> getPrenotazioniFromIdUtente(Long idUtente) {
@@ -90,9 +95,17 @@ public class PrenotazioneService {
         return prenotazioneRepository.getMaxId();
     }
 
-    public Boolean isCheckin(Long idPrenotazione) {
-        long numCheck=prenotazioneRepository.isCheckin(idPrenotazione);
-        long numPass=prenotazioneRepository.countTotale(idPrenotazione);
-        return numCheck == numPass;
+    @Transactional
+    public void deletePrenotazione(Long idPrenotazione) {
+        List<Prenotazione> p=prenotazioneRepository.getPrenotazioniById(idPrenotazione);
+        p.forEach(g->{
+            Optional<VoloPosto> optPosto=voloPostoRepository.findById(new VoloPostoId(g.getVolo().getId(),g.getPosto().getId()));
+           if(optPosto.isPresent()){
+               VoloPosto posto=optPosto.get();
+               posto.setStato(false);
+               voloPostoRepository.save(posto);
+           }
+        });
+        prenotazioneRepository.deleteAll(p);
     }
 }

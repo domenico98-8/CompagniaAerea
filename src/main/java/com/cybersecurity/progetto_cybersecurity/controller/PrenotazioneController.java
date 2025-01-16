@@ -93,7 +93,8 @@ public class PrenotazioneController {
 
         Long idVolo=voloService.getIdVoloByCodiceVolo(prenotazione.getVolo());
 
-        Long id=prenotazioneService.getMaxIdPrenotazione()+1;
+        Long maxId=prenotazioneService.getMaxIdPrenotazione();
+        Long id=(maxId==null?0:maxId)+1;
         for(int i=0; i<prenotazione.getPasseggeri().size(); i++) {
             ClienteDTO passeggero= prenotazione.getPasseggeri().get(i);
             PostoDTO posto=prenotazione.getPosti().get(i);
@@ -156,11 +157,11 @@ public class PrenotazioneController {
         return ResponseEntity.status(HttpStatus.ACCEPTED).body("Check-in Effettuato!");
     }
 
-    @GetMapping("/isCheckin/{idPrenotazione}/{numpass}")
-    public ResponseEntity<Boolean> isCheckin(@PathVariable Long idPrenotazione, @PathVariable Long numpass) {
-        Boolean b=prenotazioneService.isCheckin(idPrenotazione);
+    @DeleteMapping("/cancellaPrenotazione/{idPrenotazione}")
+    public ResponseEntity<Boolean> cancellaPrenotazione(@PathVariable Long idPrenotazione){
+        prenotazioneService.deletePrenotazione(idPrenotazione);
 
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(b);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(true);
     }
 
     public <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {

@@ -1,17 +1,15 @@
 package com.cybersecurity.progetto_cybersecurity.entity;
 
 import jakarta.persistence.*;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.io.Serializable;
 
-
 @Embeddable
-@Getter
-@Setter
+@Data
 @EqualsAndHashCode
+@AllArgsConstructor
+@NoArgsConstructor
 public class VoloPostoId implements Serializable {
 
     @Column(name = "id_volo")
