@@ -36,7 +36,6 @@ public class Prenotazione {
     @JoinColumn(name = "id_posto", referencedColumnName = "id", insertable = false, updatable = false)
     private Posto posto;
 
-    // Non è necessario mappare id_cliente separatamente poiché è parte della chiave primaria composta
     @ManyToOne
     @JoinColumn(name = "id_cliente", referencedColumnName = "id", insertable = false, updatable = false)
     private Cliente cliente;

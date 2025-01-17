@@ -22,5 +22,6 @@ public interface VoloRepository extends JpaRepository<Volo, Long> {
                                     @Param("fromDate") LocalDateTime fromDate,
                                     @Param("maxDate") LocalDateTime max
                                     );
+
     Optional<Volo> findVoloByCodiceVolo(String codiceVolo);
 }

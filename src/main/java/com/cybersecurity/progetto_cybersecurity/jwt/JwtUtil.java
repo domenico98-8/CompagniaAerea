@@ -9,7 +9,7 @@ import java.util.Date;
 
 @Component
 public class JwtUtil {
-
+    //esternalizzare
     private final String SECRET_KEY = "Kx0p3LcLpY++rUzWpJ1Eg1b63c8/MUwFQah7kqvJoFg="; // Usa una chiave sicura!
 
     // Genera un token JWT

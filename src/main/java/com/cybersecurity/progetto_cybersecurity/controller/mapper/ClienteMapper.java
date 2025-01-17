@@ -38,7 +38,7 @@ public class ClienteMapper {
         cliente.setDataNascita(dto.getDataNascita());
         cliente.setDocumento(dto.getDocumento());
         cliente.setSesso(dto.getSesso());
-        // Imposta l'utente, se necessario, a partire dall'ID (opzionale)
+
         if (dto.getIdUtente() != null) {
             Utente utente = new Utente();
             utente.setId(dto.getIdUtente());

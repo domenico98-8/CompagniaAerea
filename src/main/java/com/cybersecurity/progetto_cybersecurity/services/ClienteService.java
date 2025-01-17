@@ -17,12 +17,6 @@ public class ClienteService {
     @Autowired
     private ClienteRepository clienteRepository;
 
-    // Trova un cliente per ID e restituisci il DTO
-    public Optional<ClienteDTO> getClienteById(Long id) {
-        Optional<Cliente> cliente = clienteRepository.findById(id);
-        return cliente.map(ClienteMapper::toDTO);
-    }
-
     // Trova un cliente tramite il documento e restituisci il DTO
     @Transactional
     public ClienteDTO getClienteByDocumento(String documento) {

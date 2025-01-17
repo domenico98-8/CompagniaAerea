@@ -27,7 +27,6 @@ public class PrenotazioneMapper {
     @Autowired
     private BagaglioRepository bagaglioRepository;
 
-    // Mappa Prenotazione -> PrenotazioneDTO
     public static PrenotazioneDTO prenotazioneToPrenotazioneDTO(Prenotazione prenotazione) {
         if (prenotazione == null) {
             return null;
@@ -42,7 +41,6 @@ public class PrenotazioneMapper {
                 .build();
     }
 
-    // Mappa PrenotazioneDTO -> Prenotazione
     public Prenotazione prenotazioneDTOToPrenotazione(PrenotazioneDTO prenotazioneDTO) {
         if (prenotazioneDTO == null) {
             return null;

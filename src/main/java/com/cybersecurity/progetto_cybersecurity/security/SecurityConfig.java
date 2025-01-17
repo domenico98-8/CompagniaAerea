@@ -27,7 +27,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf().disable()
-                .cors() // Abilita la configurazione CORS
+                .cors()
                 .and()
                 .authorizeHttpRequests()
                 .requestMatchers("/api/utenti/login","/api/utenti/registrazione").permitAll()  // Consenti l'accesso senza autenticazione al login

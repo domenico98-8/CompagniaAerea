@@ -52,7 +52,7 @@ public class VoloMapper {
             return new ArrayList<>();
         }
         return voli.stream()
-                .map(this::toDTO) // Usa il metodo esistente toDTO
+                .map(this::toDTO)
                 .collect(Collectors.toList());
     }
 
@@ -61,7 +61,7 @@ public class VoloMapper {
             return new ArrayList<>();
         }
         return voloDTOs.stream()
-                .map(this::toEntity) // Usa il metodo esistente toEntity
+                .map(this::toEntity)
                 .collect(Collectors.toList());
     }
 
@@ -70,7 +70,6 @@ public class VoloMapper {
             return null;
         }
 
-        // Conversione da java.util.Date a LocalDate
         LocalDate localDate = data.toInstant()
                 .atZone(ZoneId.systemDefault())
                 .toLocalDate();
@@ -92,10 +91,8 @@ public class VoloMapper {
             return;
         }
 
-        // Converti la data
         Date date = Date.from(dateTime.atZone(ZoneId.systemDefault()).toInstant());
 
-        // Formatta l'ora come stringa
         String time = String.format("%02d:%02d", dateTime.getHour(), dateTime.getMinute());
 
         if (isPartenza) {

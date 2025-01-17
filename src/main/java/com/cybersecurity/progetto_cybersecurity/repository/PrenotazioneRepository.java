@@ -23,12 +23,4 @@ public interface PrenotazioneRepository extends JpaRepository<Prenotazione, Pren
 
     @Query("SELECT MAX(p.id.id) FROM Prenotazione p")
     Long getMaxId();
-
-    @Query("SELECT COUNT(p) FROM Prenotazione p WHERE p.id.id = :idPrenotazione AND p.checkin = true")
-    Long isCheckin(@Param("idPrenotazione")Long idPrenotazione);
-
-    @Query("SELECT COUNT(p) FROM Prenotazione p WHERE p.id.id = :idPrenotazione")
-    long countTotale(@Param("idPrenotazione") Long idPrenotazione);
-
-    PrenotazioneId id(PrenotazioneId id);
 }

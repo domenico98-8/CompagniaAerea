@@ -1,7 +1,6 @@
 package com.cybersecurity.progetto_cybersecurity.services;
 
 import com.cybersecurity.progetto_cybersecurity.controller.dto.ClienteDTO;
-import com.cybersecurity.progetto_cybersecurity.controller.dto.PostoDTO;
 import com.cybersecurity.progetto_cybersecurity.controller.dto.PrenotazioneDTO;
 import com.cybersecurity.progetto_cybersecurity.controller.mapper.ClienteMapper;
 import com.cybersecurity.progetto_cybersecurity.controller.mapper.PrenotazioneMapper;
@@ -25,15 +24,6 @@ public class PrenotazioneService {
     private PrenotazioneMapper prenotazioneMapper;
 
     @Autowired
-    private VoloRepository voloRepository;
-
-    @Autowired
-    private PostoRepository postoRepository;
-
-    @Autowired
-    private ClienteRepository clienteRepository;
-
-    @Autowired
     private VoloPostoRepository voloPostoRepository;
 
     @Transactional
@@ -46,28 +36,6 @@ public class PrenotazioneService {
     public List<PrenotazioneDTO> getPrenotazioneById(Long id) {
         List<Prenotazione> prenotazione = prenotazioneRepository.getPrenotazioniById(id);
         return prenotazione.stream().map(PrenotazioneMapper::prenotazioneToPrenotazioneDTO).toList();
-    }
-
-    // Crea una nuova prenotazione
-    @Transactional
-    public PrenotazioneDTO createPrenotazione(PrenotazioneDTO prenotazioneDTO) {
-        Volo volo = voloRepository.findById(prenotazioneDTO.getPrenotazioneId().getId_volo())
-                .orElseThrow(() -> new RuntimeException("Volo non trovato"));
-        Posto posto = postoRepository.findById(prenotazioneDTO.getPrenotazioneId().getId_posto())
-                .orElseThrow(() -> new RuntimeException("Posto non trovato"));
-        Cliente cliente = null;
-        if (prenotazioneDTO.getPrenotazioneId().getId_cliente() != null) {
-            cliente = clienteRepository.findById(prenotazioneDTO.getPrenotazioneId().getId_cliente())
-                    .orElseThrow(() -> new RuntimeException("Utente non trovato"));
-        }
-
-        Prenotazione prenotazione = prenotazioneMapper.prenotazioneDTOToPrenotazione(prenotazioneDTO);
-        prenotazione.setVolo(volo);
-        prenotazione.setPosto(posto);
-        prenotazione.setCliente(cliente);
-
-        Prenotazione createdPrenotazione = prenotazioneRepository.save(prenotazione);
-        return PrenotazioneMapper.prenotazioneToPrenotazioneDTO(createdPrenotazione);
     }
 
 
@@ -83,7 +51,6 @@ public class PrenotazioneService {
         prenotazioneRepository.saveAll(entity);
     }
 
-    @Transactional
     public List<ClienteDTO> getClienteByIdPrenotazione(Long idPrenotazione) {
         List<Cliente> clientiPrenotazione=prenotazioneRepository.getClientebyIdPrenotazione(idPrenotazione);
         List<ClienteDTO> clienteDTOS =new ArrayList<>();

@@ -74,7 +74,4 @@ public class PostoService {
        return postoPrenotato.map(PostoMapper::postoToPostoDTO).orElse(null);
     }
 
-    public void save(PostoDTO postoDTO) {
-        postoRepository.save(new Posto());
-    }
 }

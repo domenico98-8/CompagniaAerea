@@ -2,7 +2,6 @@ package com.cybersecurity.progetto_cybersecurity.utility;
 
 import com.cybersecurity.progetto_cybersecurity.controller.dto.ClienteDTO;
 import com.cybersecurity.progetto_cybersecurity.controller.dto.PostoDTO;
-import com.cybersecurity.progetto_cybersecurity.controller.dto.UtenteDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

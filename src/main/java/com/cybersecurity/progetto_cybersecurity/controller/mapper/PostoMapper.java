@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 @Component
 public class PostoMapper {
 
-    // Mappa Posto -> PostoDTO
     public static PostoDTO postoToPostoDTO(Posto posto) {
         if (posto == null) {
             return null;
@@ -21,7 +20,6 @@ public class PostoMapper {
         return postoDTO;
     }
 
-    // Mappa PostoDTO -> Posto
     public static Posto postoDTOToPosto(PostoDTO postoDTO) {
         if (postoDTO == null) {
             return null;
@@ -32,23 +30,21 @@ public class PostoMapper {
         return posto;
     }
 
-    // Mappa una lista di Posto -> Lista di PostoDTO
     public static List<PostoDTO> postoListToPostoDTOList(List<Posto> posti) {
         if (posti == null) {
             return null;
         }
         return posti.stream()
-                .map(PostoMapper::postoToPostoDTO)  // Mappa ogni Posto in PostoDTO
+                .map(PostoMapper::postoToPostoDTO)
                 .collect(Collectors.toList());
     }
 
-    // Mappa una lista di PostoDTO -> Lista di Posto
     public static List<Posto> postoDTOListToPostoList(List<PostoDTO> postoDTOs) {
         if (postoDTOs == null) {
             return null;
         }
         return postoDTOs.stream()
-                .map(PostoMapper::postoDTOToPosto)  // Mappa ogni PostoDTO in Posto
+                .map(PostoMapper::postoDTOToPosto)
                 .collect(Collectors.toList());
     }
 }

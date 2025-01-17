@@ -38,19 +38,5 @@ public class VoloPostoService {
         return voloPostoMapper.toDto(savedEntity);
     }
 
-    @Transactional
-    public void saveAll(List<VoloPostoDTO> dtoList) {
-        List<VoloPosto> entities = dtoList.stream()
-                .map(voloPostoMapper::toEntity)
-                .collect(Collectors.toList());
-
-        // Associazioni con `Volo` e `Posto` devono essere gestite qui (se necessario)
-        voloPostoRepository.saveAll(entities);
-    }
-
-    @Transactional
-    public void deleteById(VoloPostoId id) {
-        voloPostoRepository.deleteById(id);
-    }
 }
 
