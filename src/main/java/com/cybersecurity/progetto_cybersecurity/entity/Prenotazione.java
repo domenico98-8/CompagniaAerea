@@ -21,7 +21,7 @@ public class Prenotazione {
     @EmbeddedId
     private PrenotazioneId id;  // La chiave primaria composta
 
-    @Column(name = "id_bagaglio", insertable=false, updatable=false)
+    @Column(name = "id_bagaglio")
     private Long idBagaglio;
 
     @ManyToOne

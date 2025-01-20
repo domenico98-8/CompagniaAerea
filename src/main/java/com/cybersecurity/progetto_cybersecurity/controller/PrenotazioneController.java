@@ -4,9 +4,10 @@ import com.cybersecurity.progetto_cybersecurity.controller.dto.ClienteDTO;
 import com.cybersecurity.progetto_cybersecurity.controller.dto.PostoDTO;
 import com.cybersecurity.progetto_cybersecurity.controller.dto.PrenotazioneDTO;
 import com.cybersecurity.progetto_cybersecurity.controller.dto.VoloPostoDTO;
-import com.cybersecurity.progetto_cybersecurity.entity.Prenotazione;
-import com.cybersecurity.progetto_cybersecurity.entity.PrenotazioneId;
+import com.cybersecurity.progetto_cybersecurity.controller.mapper.PrenotazioneMapper;
+import com.cybersecurity.progetto_cybersecurity.entity.*;
 import com.cybersecurity.progetto_cybersecurity.services.*;
+import com.cybersecurity.progetto_cybersecurity.utility.BigliettoResponse;
 import com.cybersecurity.progetto_cybersecurity.utility.CheckinRequest;
 import com.cybersecurity.progetto_cybersecurity.utility.PrenotazioneRequest;
 import com.cybersecurity.progetto_cybersecurity.utility.PrenotazioneResponse;
@@ -44,7 +45,7 @@ public class PrenotazioneController {
     VoloService voloService;
 
     @Autowired
-    BagaglioService bagaglioService;
+    PrenotazioneMapper prenotazioneMapper;
 
     @GetMapping("/le-mie-prenotazioni/{idUtente}")
     public ResponseEntity<List<PrenotazioneResponse>> getPrenotazioni(@PathVariable Long idUtente) {
@@ -158,10 +159,30 @@ public class PrenotazioneController {
     }
 
     @DeleteMapping("/cancellaPrenotazione/{idPrenotazione}")
+    @Transactional
     public ResponseEntity<Boolean> cancellaPrenotazione(@PathVariable Long idPrenotazione){
         prenotazioneService.deletePrenotazione(idPrenotazione);
 
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(true);
+    }
+
+    @GetMapping("/getBiglietti/{idPrenotazione}")
+    @Transactional
+    public ResponseEntity<List<BigliettoResponse>> getBiglietti(@PathVariable Long idPrenotazione){
+        List<PrenotazioneDTO> prenotazioni=prenotazioneService.getPrenotazioneById(idPrenotazione);
+        List<BigliettoResponse> biglietti=new ArrayList<>();
+        for(PrenotazioneDTO prenotazione: prenotazioni){
+            Prenotazione prenotazioneEntity=prenotazioneMapper.prenotazioneDTOToPrenotazione(prenotazione);
+            Cliente clienteEntity=prenotazioneEntity.getCliente();
+            Bagaglio bagaglio=prenotazioneEntity.getBagaglio();
+            Posto postoEntity=prenotazioneEntity.getPosto();
+            String bagaglioString=bagaglio==null?"Bagaglio Non Selezionato":bagaglio.getDescrizione()+" ("+bagaglio.getPeso()+"KG) ";
+            BigliettoResponse bigliettoResponse=new BigliettoResponse(clienteEntity.getNome(),
+                    clienteEntity.getCognome(),clienteEntity.getDocumento(),bagaglioString,
+                    postoEntity.getNumeroPosto());
+            biglietti.add(bigliettoResponse);
+        }
+        return ResponseEntity.ok(biglietti);
     }
 
     public <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
