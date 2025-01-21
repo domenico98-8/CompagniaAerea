@@ -17,6 +17,9 @@ public class ClienteService {
     @Autowired
     private ClienteRepository clienteRepository;
 
+    @Autowired
+    private ClienteMapper clienteMapper;
+
     // Trova un cliente tramite il documento e restituisci il DTO
     @Transactional
     public ClienteDTO getClienteByDocumento(String documento) {
@@ -62,5 +65,12 @@ public class ClienteService {
                 .orElseThrow(() -> new RuntimeException("Cliente non trovato con id " + id));
         clienteRepository.delete(cliente);
     }
+
+    public ClienteDTO findClienteByUtenteId(Long utenteId) {
+        Optional<Cliente> cliente=clienteRepository.findClienteByUtenteId(utenteId);
+        return clienteMapper.toDTO(cliente.orElse(null));
+    }
+
+
 }
 

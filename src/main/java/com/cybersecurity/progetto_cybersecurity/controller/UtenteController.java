@@ -3,6 +3,7 @@ package com.cybersecurity.progetto_cybersecurity.controller;
 
 import com.cybersecurity.progetto_cybersecurity.controller.dto.ClienteDTO;
 import com.cybersecurity.progetto_cybersecurity.controller.dto.UtenteDTO;
+import com.cybersecurity.progetto_cybersecurity.entity.Cliente;
 import com.cybersecurity.progetto_cybersecurity.jwt.JwtUtil;
 import com.cybersecurity.progetto_cybersecurity.services.ClienteService;
 import com.cybersecurity.progetto_cybersecurity.services.UtenteService;
@@ -92,5 +93,11 @@ public class UtenteController {
         }else{
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Utente non trovato!");
         }
+    }
+
+    @GetMapping("/getUserAccount/{codiceUtente}")
+    public ResponseEntity<ClienteDTO> getUserAccount(@PathVariable String codiceUtente) {
+        ClienteDTO cliente=clienteService.findClienteByUtenteId(Long.parseLong(codiceUtente));
+        return ResponseEntity.status(HttpStatus.OK).body(cliente);
     }
 }
