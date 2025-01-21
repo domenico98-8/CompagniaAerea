@@ -94,7 +94,13 @@ public class PrenotazioneController {
 
         Long idVolo=voloService.getIdVoloByCodiceVolo(prenotazione.getVolo());
 
+        String registrato=existBook(prenotazione.getPasseggeri(), idVolo);
+        if(!registrato.isEmpty()){
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("L'utente "+registrato+" risulta già prenotato per questo volo!");
+        }
+
         Long maxId=prenotazioneService.getMaxIdPrenotazione();
+
         Long id=(maxId==null?0:maxId)+1;
         for(int i=0; i<prenotazione.getPasseggeri().size(); i++) {
             ClienteDTO passeggero= prenotazione.getPasseggeri().get(i);
@@ -118,6 +124,15 @@ public class PrenotazioneController {
         }
 
         return ResponseEntity.status(HttpStatus.ACCEPTED).body("Volo Prenotato!");
+    }
+
+    private String existBook(List<ClienteDTO> clienti,Long idVolo){
+        for(ClienteDTO cliente:clienti) {
+            if(prenotazioneService.getPrenotazioneByVoloCliente(cliente.getId(),idVolo)){
+                return cliente.getNome();
+            }
+        }
+        return "";
     }
 
     @GetMapping("/getClientiFromPrenotazione/{id}")
@@ -189,5 +204,7 @@ public class PrenotazioneController {
         Set<Object> seen = new HashSet<>();
         return t -> seen.add(keyExtractor.apply(t));
     }
+
+
 
 }

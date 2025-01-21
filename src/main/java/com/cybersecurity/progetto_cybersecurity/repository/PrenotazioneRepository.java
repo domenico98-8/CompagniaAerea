@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface PrenotazioneRepository extends JpaRepository<Prenotazione, PrenotazioneId> {
 
@@ -23,4 +24,8 @@ public interface PrenotazioneRepository extends JpaRepository<Prenotazione, Pren
 
     @Query("SELECT MAX(p.id.id) FROM Prenotazione p")
     Long getMaxId();
+
+    @Query("SELECT p FROM Prenotazione p where p.cliente.id=:idCliente AND p.volo.id=:codiceVolo")
+    Optional<Prenotazione> getPrenotazioneByVoloCliente(@Param("idCliente") Long idCliente,
+                                                        @Param("codiceVolo") Long codiceVolo);
 }

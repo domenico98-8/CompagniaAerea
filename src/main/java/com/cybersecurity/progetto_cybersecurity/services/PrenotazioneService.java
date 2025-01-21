@@ -75,4 +75,9 @@ public class PrenotazioneService {
         });
         prenotazioneRepository.deleteAll(p);
     }
+
+    public Boolean getPrenotazioneByVoloCliente(Long idCliente,Long codiceVolo){
+        Optional<Prenotazione> prenotazione=prenotazioneRepository.getPrenotazioneByVoloCliente(idCliente,codiceVolo);
+        return prenotazione.isPresent();
+    }
 }
