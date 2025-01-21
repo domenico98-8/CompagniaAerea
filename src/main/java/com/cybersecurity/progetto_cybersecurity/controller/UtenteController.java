@@ -5,6 +5,7 @@ import com.cybersecurity.progetto_cybersecurity.controller.dto.ClienteDTO;
 import com.cybersecurity.progetto_cybersecurity.controller.dto.UtenteDTO;
 import com.cybersecurity.progetto_cybersecurity.entity.Cliente;
 import com.cybersecurity.progetto_cybersecurity.jwt.JwtUtil;
+import com.cybersecurity.progetto_cybersecurity.security.PasswordService;
 import com.cybersecurity.progetto_cybersecurity.services.ClienteService;
 import com.cybersecurity.progetto_cybersecurity.services.UtenteService;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -34,11 +35,16 @@ public class UtenteController {
     @Autowired
     private ClienteService clienteService;
 
+    @Autowired
+    private PasswordService passwordService;
+
     @PostMapping("/registrazione")
     public ResponseEntity<String> registraUtente(@RequestBody UtenteDTO utente) {
         if(utenteService.existUtente(utente.getEmail())) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Utente già registrato con questa email.");
         }
+
+        utente.setPassword(passwordService.hashPassword(utente.getPassword()));
 
         UtenteDTO userSaved = utenteService.saveUtente(utente);
         ClienteDTO clienteDTO=clienteService.getClienteByDocumento(utente.getDocumento());
@@ -80,8 +86,10 @@ public class UtenteController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Richiesta errata!");
         }
+
         Optional<UtenteDTO> userDto=utenteService.getUtente(email);
         if(userDto.isPresent()){
+            password=passwordService.hashPassword(password);
             UtenteDTO utenteDTO=userDto.get();
             if(password.equals(utenteDTO.getPassword())){
                 // Genera un token
