@@ -6,6 +6,7 @@ import com.cybersecurity.progetto_cybersecurity.controller.dto.PrenotazioneDTO;
 import com.cybersecurity.progetto_cybersecurity.controller.dto.VoloPostoDTO;
 import com.cybersecurity.progetto_cybersecurity.controller.mapper.PrenotazioneMapper;
 import com.cybersecurity.progetto_cybersecurity.entity.*;
+import com.cybersecurity.progetto_cybersecurity.security.InputValidator;
 import com.cybersecurity.progetto_cybersecurity.services.*;
 import com.cybersecurity.progetto_cybersecurity.utility.BigliettoResponse;
 import com.cybersecurity.progetto_cybersecurity.utility.CheckinRequest;
@@ -47,8 +48,15 @@ public class PrenotazioneController {
     @Autowired
     PrenotazioneMapper prenotazioneMapper;
 
+    @Autowired
+    InputValidator validator;
+
     @GetMapping("/le-mie-prenotazioni/{idUtente}")
     public ResponseEntity<List<PrenotazioneResponse>> getPrenotazioni(@PathVariable Long idUtente) {
+
+        if(!validator.isValidId(idUtente)){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
 
         List<Prenotazione> prenotazioni = prenotazioneService.getPrenotazioniFromIdUtente(idUtente);
 
@@ -137,6 +145,9 @@ public class PrenotazioneController {
 
     @GetMapping("/getClientiFromPrenotazione/{id}")
     public ResponseEntity<List<ClienteDTO>> getClientiFromPrenotazioe(@PathVariable Long id){
+        if(!validator.isValidId(id)){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(prenotazioneService.getClienteByIdPrenotazione(id));
     }
 
@@ -144,6 +155,10 @@ public class PrenotazioneController {
     @Transactional
     public ResponseEntity<String> checkin(@RequestBody List<CheckinRequest> checkin, @PathVariable Long idPrenotazione) {
         try {
+            if(!validator.isValidId(idPrenotazione)){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            }
+
             List<PrenotazioneDTO> prenotazioniDTO = prenotazioneService.getPrenotazioneById(idPrenotazione);
             if (prenotazioniDTO == null || prenotazioniDTO.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Prenotazione non trovata!");
@@ -176,6 +191,11 @@ public class PrenotazioneController {
     @DeleteMapping("/cancellaPrenotazione/{idPrenotazione}")
     @Transactional
     public ResponseEntity<Boolean> cancellaPrenotazione(@PathVariable Long idPrenotazione){
+
+        if(!validator.isValidId(idPrenotazione)){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+
         prenotazioneService.deletePrenotazione(idPrenotazione);
 
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(true);
@@ -184,27 +204,32 @@ public class PrenotazioneController {
     @GetMapping("/getBiglietti/{idPrenotazione}")
     @Transactional
     public ResponseEntity<List<BigliettoResponse>> getBiglietti(@PathVariable Long idPrenotazione){
+        if(!validator.isValidId(idPrenotazione)){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+
         List<PrenotazioneDTO> prenotazioni=prenotazioneService.getPrenotazioneById(idPrenotazione);
         List<BigliettoResponse> biglietti=new ArrayList<>();
         for(PrenotazioneDTO prenotazione: prenotazioni){
             Prenotazione prenotazioneEntity=prenotazioneMapper.prenotazioneDTOToPrenotazione(prenotazione);
-            Cliente clienteEntity=prenotazioneEntity.getCliente();
-            Bagaglio bagaglio=prenotazioneEntity.getBagaglio();
-            Posto postoEntity=prenotazioneEntity.getPosto();
-            String bagaglioString=bagaglio==null?"Bagaglio Non Selezionato":bagaglio.getDescrizione()+" ("+bagaglio.getPeso()+"KG) ";
-            BigliettoResponse bigliettoResponse=new BigliettoResponse(clienteEntity.getNome(),
-                    clienteEntity.getCognome(),clienteEntity.getDocumento(),bagaglioString,
-                    postoEntity.getNumeroPosto());
+            BigliettoResponse bigliettoResponse = getBigliettoResponse(prenotazioneEntity);
             biglietti.add(bigliettoResponse);
         }
         return ResponseEntity.ok(biglietti);
+    }
+
+    private BigliettoResponse getBigliettoResponse(Prenotazione prenotazioneEntity) {
+        Cliente clienteEntity= prenotazioneEntity.getCliente();
+        Bagaglio bagaglio= prenotazioneEntity.getBagaglio();
+        Posto postoEntity= prenotazioneEntity.getPosto();
+        String bagaglioString=bagaglio==null?"Bagaglio Non Selezionato":bagaglio.getDescrizione()+" ("+bagaglio.getPeso()+"KG) ";
+        return new BigliettoResponse(clienteEntity.getNome(),
+                clienteEntity.getCognome(),clienteEntity.getDocumento(),bagaglioString,
+                postoEntity.getNumeroPosto());
     }
 
     public <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
         Set<Object> seen = new HashSet<>();
         return t -> seen.add(keyExtractor.apply(t));
     }
-
-
-
 }

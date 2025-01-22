@@ -5,6 +5,7 @@ import com.cybersecurity.progetto_cybersecurity.controller.dto.ClienteDTO;
 import com.cybersecurity.progetto_cybersecurity.controller.dto.UtenteDTO;
 import com.cybersecurity.progetto_cybersecurity.entity.Cliente;
 import com.cybersecurity.progetto_cybersecurity.jwt.JwtUtil;
+import com.cybersecurity.progetto_cybersecurity.security.InputValidator;
 import com.cybersecurity.progetto_cybersecurity.security.PasswordService;
 import com.cybersecurity.progetto_cybersecurity.services.ClienteService;
 import com.cybersecurity.progetto_cybersecurity.services.UtenteService;
@@ -13,6 +14,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.token.TokenService;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -37,6 +39,9 @@ public class UtenteController {
 
     @Autowired
     private PasswordService passwordService;
+
+    @Autowired
+    private InputValidator validator;
 
     @PostMapping("/registrazione")
     public ResponseEntity<String> registraUtente(@RequestBody UtenteDTO utente) {
@@ -87,6 +92,10 @@ public class UtenteController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Richiesta errata!");
         }
 
+        if(!validator.isValid(email)){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Email non valida!");
+        }
+
         Optional<UtenteDTO> userDto=utenteService.getUtente(email);
         if(userDto.isPresent()){
             password=passwordService.hashPassword(password);
@@ -105,6 +114,9 @@ public class UtenteController {
 
     @GetMapping("/getUserAccount/{codiceUtente}")
     public ResponseEntity<ClienteDTO> getUserAccount(@PathVariable String codiceUtente) {
+        if(!validator.isValidString(codiceUtente)){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
         ClienteDTO cliente=clienteService.findClienteByUtenteId(Long.parseLong(codiceUtente));
         return ResponseEntity.status(HttpStatus.OK).body(cliente);
     }
