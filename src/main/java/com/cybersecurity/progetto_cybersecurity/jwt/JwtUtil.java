@@ -3,6 +3,7 @@ package com.cybersecurity.progetto_cybersecurity.jwt;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.Claims;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -10,7 +11,8 @@ import java.util.Date;
 @Component
 public class JwtUtil {
     //esternalizzare
-    private final String SECRET_KEY = "Kx0p3LcLpY++rUzWpJ1Eg1b63c8/MUwFQah7kqvJoFg="; // Usa una chiave sicura!
+    @Value("${spring.jwt.secretkey}")
+    private String SECRET_KEY; // Usa una chiave sicura!
 
     // Genera un token JWT
     public String generateToken(String password) {

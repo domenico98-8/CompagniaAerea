@@ -3,7 +3,6 @@ package com.cybersecurity.progetto_cybersecurity.controller;
 
 import com.cybersecurity.progetto_cybersecurity.controller.dto.ClienteDTO;
 import com.cybersecurity.progetto_cybersecurity.controller.dto.UtenteDTO;
-import com.cybersecurity.progetto_cybersecurity.entity.Cliente;
 import com.cybersecurity.progetto_cybersecurity.jwt.JwtUtil;
 import com.cybersecurity.progetto_cybersecurity.security.InputValidator;
 import com.cybersecurity.progetto_cybersecurity.security.PasswordService;
@@ -14,13 +13,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.token.TokenService;
 import org.springframework.web.bind.annotation.*;
 
 
 import java.util.Optional;
 
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "https://localhost:4200")
 @RestController
 @RequestMapping("/api/utenti")
 public class UtenteController {
