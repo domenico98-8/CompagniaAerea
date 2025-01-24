@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@CrossOrigin(origins = "https://localhost:4200")
+@CrossOrigin(origins = "https://localhost:443")
 @RestController
 @RequestMapping("/api/posti")
 public class PostoController {
