@@ -25,7 +25,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-@CrossOrigin(origins = "https://localhost:443")
+@CrossOrigin(origins = "https://localhost", allowCredentials = "true")
 @RestController
 @RequestMapping("/api/prenotazioni")
 public class PrenotazioneController {

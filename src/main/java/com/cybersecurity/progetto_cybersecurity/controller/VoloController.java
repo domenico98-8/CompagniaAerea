@@ -16,7 +16,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Slf4j
-@CrossOrigin(origins = "https://localhost:443")
+@CrossOrigin(origins = "https://localhost", allowCredentials = "true")
 @RestController
 @RequestMapping("/api/voli")
 public class VoloController {

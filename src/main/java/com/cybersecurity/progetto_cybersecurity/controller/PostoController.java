@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@CrossOrigin(origins = "https://localhost:443")
+@CrossOrigin(origins = "https://localhost", allowCredentials = "true")
 @RestController
 @RequestMapping("/api/posti")
 public class PostoController {
@@ -38,7 +38,8 @@ public class PostoController {
 
     @GetMapping("/findByCodiceVolo/{codiceVolo}")
     public ResponseEntity<List<VoloPostoResponse>> getPostoByVolo(@PathVariable String codiceVolo)
-    {   if(!validator.isValidString(codiceVolo)){
+    {
+        if(!validator.isValidString(codiceVolo)){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
         return ResponseEntity.ok(postoService.getPostiByCodiceVolo(codiceVolo));

@@ -1,6 +1,7 @@
 package com.cybersecurity.progetto_cybersecurity.jwt;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -10,10 +11,14 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import java.io.IOException;
 import java.util.ArrayList;
+
+import static com.cybersecurity.progetto_cybersecurity.utility.Utils.extractJwtFromCookie;
 
 @Component
 public class JwtFilter extends OncePerRequestFilter {
+
 
     private final JwtUtil jwtUtil;
 
@@ -22,26 +27,17 @@ public class JwtFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
-            throws java.io.IOException, ServletException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
 
-        final String authorizationHeader = request.getHeader("Authorization");
+        String token = extractJwtFromCookie(request);
 
-        String password = null;
-        String token = null;
-
-        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            token = authorizationHeader.substring(7);
-            password = jwtUtil.extractPassword(token);
+        if (token != null && jwtUtil.validateToken(token)) {
+            // Se il token è valido, continua con la catena di filtri
+            Authentication authentication = new UsernamePasswordAuthenticationToken(null, null, new ArrayList<>());
+            SecurityContextHolder.getContext().setAuthentication(authentication);
         }
 
-        if (password != null && jwtUtil.validateToken(token)) {
-            UsernamePasswordAuthenticationToken authenticationToken =
-                    new UsernamePasswordAuthenticationToken(password, null, new ArrayList<>());
-            // Imposta l'autenticazione nel contesto di sicurezza
-            SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-        }
-
-        chain.doFilter(request, response);
+        filterChain.doFilter(request, response);
     }
 }

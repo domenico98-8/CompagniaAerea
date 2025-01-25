@@ -10,15 +10,19 @@ import com.cybersecurity.progetto_cybersecurity.services.ClienteService;
 import com.cybersecurity.progetto_cybersecurity.services.UtenteService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-
 import java.util.Optional;
 
-@CrossOrigin(origins = "https://localhost:443")
+import static com.cybersecurity.progetto_cybersecurity.utility.Utils.createResponse;
+
+@CrossOrigin(origins = "https://localhost", allowCredentials = "true")
 @RestController
 @RequestMapping("/api/utenti")
 public class UtenteController {
@@ -28,6 +32,7 @@ public class UtenteController {
     public UtenteController(JwtUtil jwtUtil) {
         this.jwtUtil = jwtUtil;
     }
+
 
     @Autowired
     private UtenteService utenteService;
@@ -74,7 +79,7 @@ public class UtenteController {
 
     //Restiruire un token
     @PostMapping("/login")
-    public ResponseEntity<String> loginUtente(@RequestBody String credenziali) {
+    public ResponseEntity<Object> loginUtente(@RequestBody String credenziali, HttpServletResponse response) {
         ObjectMapper objectMapper = new ObjectMapper();
         String email = "";
         String password = "";
@@ -87,28 +92,83 @@ public class UtenteController {
             password = jsonNode.get("password").asText();
 
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Richiesta errata!");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(createResponse("Richiesta errata!",HttpStatus.BAD_REQUEST.value()));
         }
 
         if(!validator.isValid(email)){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Email non valida!");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(createResponse("Email non valida!",HttpStatus.UNAUTHORIZED.value()));
         }
 
-        Optional<UtenteDTO> userDto=utenteService.getUtente(email);
+        Optional<UtenteDTO> userDto = utenteService.getUtente(email);
         if(userDto.isPresent()){
-            password=passwordService.hashPassword(password);
-            UtenteDTO utenteDTO=userDto.get();
+            password = passwordService.hashPassword(password);
+            UtenteDTO utenteDTO = userDto.get();
             if(password.equals(utenteDTO.getPassword())){
                 // Genera un token
                 String token = jwtUtil.generateToken(password);
-                return ResponseEntity.ok(token+";"+userDto.get().getId());
-            }else{
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenziali non valide");
+
+                // Creazione del cookie HttpOnly con il token
+                ResponseCookie tokenJwt = ResponseCookie.from("token", token)
+                        .httpOnly(true)
+                        .secure(true) // Usa true per HTTPS
+                        .path("/")
+                        .sameSite("Strict") // o "Lax", dipende dal tuo caso d'uso
+                        .maxAge(3600) // Durata del cookie in secondi
+                        .build();
+
+                // Aggiungi il cookie per l'ID utente
+                ResponseCookie userIdCookie = ResponseCookie.from("userId", utenteDTO.getId().toString())
+                        .httpOnly(false)  // Non è necessario HttpOnly per l'ID
+                        .secure(true) // Usa true per HTTPS
+                        .path("/")
+                        .sameSite("Strict")
+                        .maxAge(3600) // Durata del cookie in secondi
+                        .build();
+
+                // Aggiungi entrambi i cookie alla risposta
+                response.addHeader("Set-Cookie", tokenJwt.toString());
+                response.addHeader("Set-Cookie", userIdCookie.toString());
+
+                System.out.println(token);
+                // Ritorna una risposta con il successivo id dell'utente
+                return ResponseEntity.status(HttpStatus.ACCEPTED).body(createResponse("Login effettuato con successo", HttpStatus.ACCEPTED.value()));
+            } else {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(createResponse("Credenziali non valide",HttpStatus.UNAUTHORIZED.value()));
             }
-        }else{
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Utente non trovato!");
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(createResponse("Utente non trovato!",HttpStatus.UNAUTHORIZED.value()));
         }
     }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Object> logoutUtente(HttpServletResponse response) {
+        // Imposta il cookie per il token JWT con Expires a una data passata
+        ResponseCookie tokenCookie = ResponseCookie.from("token", "")
+                .httpOnly(true)
+                .secure(true) // Usa true per HTTPS
+                .path("/")    // Lo stesso path del cookie originale
+                .sameSite("Strict")
+                .maxAge(0)    // Scadenza immediata
+                .build();
+
+        // Imposta il cookie per l'ID utente con Expires a una data passata
+        ResponseCookie userIdCookie = ResponseCookie.from("userId", "")
+                .httpOnly(false)  // Non necessario HttpOnly per l'ID
+                .secure(true)     // Usa true per HTTPS
+                .path("/")
+                .sameSite("Strict")
+                .maxAge(0)        // Scadenza immediata
+                .build();
+
+        // Aggiungi entrambi i cookie alla risposta
+        response.addHeader("Set-Cookie", tokenCookie.toString());
+        response.addHeader("Set-Cookie", userIdCookie.toString());
+
+        // Ritorna una risposta di successo che segnala che l'utente è stato disconnesso
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(createResponse("Logout effettuato con successo", HttpStatus.ACCEPTED.value()));
+    }
+
+
 
     @GetMapping("/getUserAccount/{codiceUtente}")
     public ResponseEntity<ClienteDTO> getUserAccount(@PathVariable String codiceUtente) {
