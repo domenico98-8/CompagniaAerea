@@ -40,4 +40,24 @@ public class JwtUtil {
                 .parseClaimsJws(token)
                 .getBody();
     }
+
+    // Metodo per calcolare il tempo di scadenza rimanente
+    public long getJwtExpiration(String jwt) {
+        try {
+            // Ottieni i Claims dal token
+            Claims claims = getClaims(jwt);
+
+            // Ottieni il valore di "exp" (expiration time) in secondi
+            Long expirationTime = claims.getExpiration().getTime() / 1000;
+
+            // Ottieni l'ora attuale in secondi
+            long currentTime = System.currentTimeMillis() / 1000;
+
+            // Calcola i secondi rimanenti
+            return expirationTime - currentTime;
+        } catch (Exception e) {
+            System.err.println("Errore durante il parsing del JWT: " + e.getMessage());
+            return 0; // Ritorna 0 in caso di errore o token non valido
+        }
+    }
 }

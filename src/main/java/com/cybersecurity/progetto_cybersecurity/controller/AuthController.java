@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import static com.cybersecurity.progetto_cybersecurity.utility.Utils.createResponse;
+import static com.cybersecurity.progetto_cybersecurity.utility.Utils.extractUserCodeFromCookie;
 
 @CrossOrigin(origins = "https://localhost", allowCredentials = "true")
 @RestController
@@ -37,6 +38,14 @@ public class AuthController {
             }
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(createResponse("Not authenticated",HttpStatus.UNAUTHORIZED.value()));
+    }
+
+
+    @GetMapping("/getCodiceUtente")
+    public ResponseEntity<String> getCodiceUtente(HttpServletRequest response) {
+        String codiceUtente=extractUserCodeFromCookie(response);
+
+        return  ResponseEntity.ok(codiceUtente);
     }
 }
 

@@ -10,7 +10,6 @@ import com.cybersecurity.progetto_cybersecurity.services.ClienteService;
 import com.cybersecurity.progetto_cybersecurity.services.UtenteService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -113,23 +112,21 @@ public class UtenteController {
                         .secure(true) // Usa true per HTTPS
                         .path("/")
                         .sameSite("Strict") // o "Lax", dipende dal tuo caso d'uso
-                        .maxAge(3600) // Durata del cookie in secondi
+                        .maxAge(jwtUtil.getJwtExpiration(token)) // Durata del cookie in secondi
                         .build();
 
                 // Aggiungi il cookie per l'ID utente
                 ResponseCookie userIdCookie = ResponseCookie.from("userId", utenteDTO.getId().toString())
-                        .httpOnly(false)  // Non è necessario HttpOnly per l'ID
+                        .httpOnly(true)  // Non è necessario HttpOnly per l'ID
                         .secure(true) // Usa true per HTTPS
                         .path("/")
                         .sameSite("Strict")
-                        .maxAge(3600) // Durata del cookie in secondi
+                        .maxAge(jwtUtil.getJwtExpiration(token)) // Durata del cookie in secondi
                         .build();
 
                 // Aggiungi entrambi i cookie alla risposta
                 response.addHeader("Set-Cookie", tokenJwt.toString());
                 response.addHeader("Set-Cookie", userIdCookie.toString());
-
-                System.out.println(token);
                 // Ritorna una risposta con il successivo id dell'utente
                 return ResponseEntity.status(HttpStatus.ACCEPTED).body(createResponse("Login effettuato con successo", HttpStatus.ACCEPTED.value()));
             } else {
@@ -153,7 +150,7 @@ public class UtenteController {
 
         // Imposta il cookie per l'ID utente con Expires a una data passata
         ResponseCookie userIdCookie = ResponseCookie.from("userId", "")
-                .httpOnly(false)  // Non necessario HttpOnly per l'ID
+                .httpOnly(true)  // Non necessario HttpOnly per l'ID
                 .secure(true)     // Usa true per HTTPS
                 .path("/")
                 .sameSite("Strict")
@@ -167,8 +164,6 @@ public class UtenteController {
         // Ritorna una risposta di successo che segnala che l'utente è stato disconnesso
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(createResponse("Logout effettuato con successo", HttpStatus.ACCEPTED.value()));
     }
-
-
 
     @GetMapping("/getUserAccount/{codiceUtente}")
     public ResponseEntity<ClienteDTO> getUserAccount(@PathVariable String codiceUtente) {
