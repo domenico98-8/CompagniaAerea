@@ -23,9 +23,10 @@ public class SecurityConfig {
         this.jwtFilter = jwtFilter;
     }
 
+    //Protegge le rotte
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf().disable()
+        http.csrf().disable()//disabilito poichè utilizziamo JWT
                 .cors()
                 .and()
                 .authorizeHttpRequests()

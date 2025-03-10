@@ -28,6 +28,19 @@ public class Utils {
         return null;
     }
 
+    public static String extractIdUserFormCookie(HttpServletRequest request) {
+        // Estrai il token dal cookie
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("userId")) {
+                    return cookie.getValue();
+                }
+            }
+        }
+        return null;
+    }
+
     public static String extractUserCodeFromCookie(HttpServletRequest request) {
         // Estrai il token dal cookie
         Cookie[] cookies = request.getCookies();

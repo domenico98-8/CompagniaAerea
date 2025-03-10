@@ -111,13 +111,13 @@ public class UtenteController {
                         .httpOnly(true)
                         .secure(true) // Usa true per HTTPS
                         .path("/")
-                        .sameSite("Strict") // o "Lax", dipende dal tuo caso d'uso
+                        .sameSite("Strict")
                         .maxAge(jwtUtil.getJwtExpiration(token)) // Durata del cookie in secondi
                         .build();
 
                 // Aggiungi il cookie per l'ID utente
                 ResponseCookie userIdCookie = ResponseCookie.from("userId", utenteDTO.getId().toString())
-                        .httpOnly(true)  // Non è necessario HttpOnly per l'ID
+                        .httpOnly(true)
                         .secure(true) // Usa true per HTTPS
                         .path("/")
                         .sameSite("Strict")
@@ -150,7 +150,7 @@ public class UtenteController {
 
         // Imposta il cookie per l'ID utente con Expires a una data passata
         ResponseCookie userIdCookie = ResponseCookie.from("userId", "")
-                .httpOnly(true)  // Non necessario HttpOnly per l'ID
+                .httpOnly(true)
                 .secure(true)     // Usa true per HTTPS
                 .path("/")
                 .sameSite("Strict")

@@ -30,10 +30,12 @@ public class JwtUtil {
     }
 
     // Verifica il token
+    //Confrota la data di scadeza del toke co quella attuale
     public boolean validateToken(String token) {
         return getClaims(token).getExpiration().after(new Date());
     }
 
+    //Estrae le informazioni del token
     private Claims getClaims(String token) {
         return Jwts.parser()
                 .setSigningKey(SECRET_KEY)
@@ -42,6 +44,7 @@ public class JwtUtil {
     }
 
     // Metodo per calcolare il tempo di scadenza rimanente
+    //lo uso per settare il maxAge del Cookie
     public long getJwtExpiration(String jwt) {
         try {
             // Ottieni i Claims dal token
